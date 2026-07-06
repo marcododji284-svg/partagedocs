@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document – 9ème – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --warning: #fbbf24;
+      --warning-soft: #2a2010;
+      --success: #4ade80;
+      --success-soft: #0f2115;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre de navigation ----- */
+    .navbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg { width: 28px; height: 28px; fill: var(--accent); }
+
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-links > a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links > a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .nav-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-profile:hover { background: var(--accent-soft); transform: scale(1.05); }
+    .nav-profile svg { width: 18px; height: 18px; fill: var(--text-muted); transition: fill 0.2s ease; }
+    .nav-profile:hover svg { fill: var(--accent); }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); transform: rotate(15deg); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: var(--accent); transition: fill 0.35s ease; }
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Section principale ----- */
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2.25rem 1.5rem 3.5rem;
+    }
+
+    .doc-page { width: 100%; max-width: 900px; }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border-strong); }
+    .breadcrumb .current { color: var(--text-soft); font-weight: 600; }
+
+    /* ----- En-tête du document ----- */
+    .doc-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.1rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .doc-header-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .doc-header-icon svg { width: 26px; height: 26px; fill: var(--accent); }
+
+    .doc-header-text { flex: 1; min-width: 220px; }
+
+    .doc-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .badge-classe { background: var(--accent-soft); color: var(--accent); }
+    .badge-lecon { background: var(--accent-soft); color: var(--accent); }
+    .badge-exercice { background: var(--warning-soft); color: var(--warning); }
+    .badge-corrige { background: var(--success-soft); color: var(--success); }
+
+    .doc-header-text h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+      line-height: 1.3;
+    }
+
+    .doc-header-text p { color: var(--text-muted); font-size: 0.92rem; }
+
+    .doc-actions { display: flex; gap: 0.6rem; margin-left: auto; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: filter 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-primary svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-secondary svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    /* ----- Zone de visualisation ----- */
+    .viewer-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      margin-bottom: 1.75rem;
+    }
+
+    .viewer-frame {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      max-height: 720px;
+      border: none;
+      display: block;
+      background: var(--bg);
+    }
+
+    .viewer-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .viewer-placeholder svg { width: 56px; height: 56px; fill: var(--text-muted); }
+    .viewer-placeholder p:first-of-type { font-weight: 600; color: var(--text-soft); font-size: 1rem; }
+    .viewer-placeholder p { color: var(--text-muted); font-size: 0.88rem; max-width: 380px; }
+
+    /* ----- Informations complémentaires ----- */
+    /* ----- Liste des fichiers du document ----- */
+    .files-panel {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .files-panel h3 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.6rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .file-row:last-child { margin-bottom: 0; }
+    .file-row:hover { border-color: var(--border-strong); background: var(--bg); }
+
+    .file-row .file-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-row .file-icon svg { width: 18px; height: 18px; fill: var(--accent); }
+    .file-row.file-type-image .file-icon { background: var(--success-soft); }
+    .file-row.file-type-image .file-icon svg { fill: var(--success); }
+
+    .file-row .file-info { flex: 1; min-width: 0; }
+    .file-row .file-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-row .file-meta { font-size: 0.78rem; color: var(--text-muted); }
+
+    .file-download-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+    }
+
+    .file-download-btn svg { width: 15px; height: 15px; fill: var(--text-muted); transition: fill 0.18s ease; }
+
+    .file-download-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .file-download-btn:hover svg { fill: var(--accent); }
+    .file-download-btn:active { transform: translateY(1px); }
+
+    .files-empty {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.87rem;
+    }
+
+    .info-panel {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .info-panel h3 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.1rem;
+    }
+
+    .info-item .info-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .info-item .info-value { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+
+    /* ----- Documents liés ----- */
+    .related-section h3 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .related-card {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+      text-decoration: none;
+      color: var(--text);
+      margin-bottom: 0.7rem;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .related-card:hover {
+      box-shadow: 0 8px 20px var(--shadow-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+
+    .related-card .related-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .related-card .related-icon svg { width: 17px; height: 17px; fill: var(--accent); }
+    .related-card .related-title { font-size: 0.9rem; font-weight: 600; }
+    .related-card .related-meta { font-size: 0.78rem; color: var(--text-muted); }
+
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    @media (max-width: 560px) {
+      .doc-header { flex-direction: column; }
+      .doc-actions { margin-left: 0; width: 100%; }
+      .doc-actions .btn-primary, .doc-actions .btn-secondary { flex: 1; justify-content: center; }
+      .viewer-frame { aspect-ratio: 3 / 4; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="9eme.html">9ème</a>
+      <a href="ns4.html">NS4</a>
+      <div class="nav-tools">
+        <a href="auth.html" class="nav-profile" aria-label="Mon compte">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="doc-page">
+      <div class="breadcrumb" id="breadcrumb"></div>
+
+      <div class="doc-header">
+        <div class="doc-header-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <div class="doc-header-text">
+          <div class="doc-badges" id="docBadges"></div>
+          <h1 id="docTitle">Document</h1>
+          <p id="docDescription"></p>
+        </div>
+        <div class="doc-actions">
+          <button class="btn-secondary" id="printBtn" type="button">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5a3 3 0 00-3 3v4h4v4h12v-4h4v-4a3 3 0 00-3-3zm-3 11H8v-5h8v5zm3-7a1 1 0 110-2 1 1 0 010 2zm-1-9H6v4h12V3z"/></svg>
+            Imprimer
+          </button>
+        </div>
+      </div>
+
+      <div class="viewer-card">
+        <div class="viewer-placeholder" id="viewerPlaceholder">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          <p id="viewerFileName">Fichier</p>
+          <p>Aperçu non disponible pour ce document de démonstration. Une fois un vrai fichier hébergé, il s'affichera ici automatiquement (PDF intégré ou image).</p>
+        </div>
+        <iframe class="viewer-frame" id="viewerFrame" style="display:none;" title="Aperçu du document"></iframe>
+      </div>
+
+      <div class="files-panel">
+        <h3>Fichiers du document</h3>
+        <div id="filesList"></div>
+        <div class="files-empty" id="filesEmpty" style="display:none;">Aucun fichier associé à ce document.</div>
+      </div>
+
+      <div class="info-panel">
+        <h3>Informations</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Classe</div>
+            <div class="info-value" id="infoClasse">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Matière</div>
+            <div class="info-value" id="infoMatiere">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Type</div>
+            <div class="info-value" id="infoType">—</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Publié</div>
+            <div class="info-value" id="infoDate">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="related-section">
+        <h3>Continuer sur cette matière</h3>
+        <a href="#" class="related-card" id="relatedBack">
+          <div class="related-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          </div>
+          <div>
+            <div class="related-title" id="relatedBackTitle">Retour à la matière</div>
+            <div class="related-meta">Voir tous les documents disponibles</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 PartageDocs – Tous droits réservés
+  </footer>
+
+  <script>
+    /* =========================================================================
+       Cette page est dédiée à une classe (fixée via PAGE_CLASSE). Deux modes :
+       - Mode réel (recommandé) : ?id=123 → on va chercher le document et ses
+         fichiers réellement hébergés via GET /api/documents/:id.
+       - Mode démo (rétrocompatibilité) : si aucun ?id n'est présent, on relit
+         les anciens paramètres d'URL (titre, description, matiere, type,
+         date, fichiers) comme avant, pour les liens générés sans backend.
+       ========================================================================= */
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+    const PAGE_CLASSE = '9eme';
+
+    const params = new URLSearchParams(window.location.search);
+    const docId = params.get('id');
+
+    const TYPE_LABELS = { lecons: 'Leçon', exercices: 'Exercice à faire', corriges: 'Exercice corrigé' };
+    const TYPE_BADGE_CLASS = { lecons: 'badge-lecon', exercices: 'badge-exercice', corriges: 'badge-corrige' };
+    const CLASSE_LABELS = { '9eme': '9ème', 'ns4': 'NS4' };
+
+    function renderDocument(data) {
+      const classeLabel = CLASSE_LABELS[data.classe] || data.classe;
+      const typeLabel = TYPE_LABELS[data.type] || data.type;
+      const classePage = data.classe === '9eme' ? '9eme.html' : data.classe === 'ns4' ? 'ns4.html' : 'index.html';
+
+      // ----- Fil d'ariane -----
+      document.getElementById('breadcrumb').innerHTML =
+        '<a href="index.html">Accueil</a>' +
+        (classeLabel ? '<span class="sep">/</span><a href="' + classePage + '">' + classeLabel + '</a>' : '') +
+        (data.matiere ? '<span class="sep">/</span><a href="' + classePage + '#' + encodeURIComponent(data.matiere.toLowerCase()) + '">' + data.matiere + '</a>' : '') +
+        '<span class="sep">/</span><span class="current">' + data.titre + '</span>';
+
+      // ----- En-tête -----
+      document.title = data.titre + ' – PartageDocs';
+      document.getElementById('docTitle').textContent = data.titre;
+      document.getElementById('docDescription').textContent = data.description;
+
+      const badgesHtml = [];
+      if (classeLabel) badgesHtml.push('<span class="badge badge-classe">' + classeLabel + '</span>');
+      if (typeLabel) badgesHtml.push('<span class="badge ' + (TYPE_BADGE_CLASS[data.type] || '') + '">' + typeLabel + '</span>');
+      document.getElementById('docBadges').innerHTML = badgesHtml.join('');
+
+      // ----- Informations -----
+      document.getElementById('infoClasse').textContent = classeLabel || '—';
+      document.getElementById('infoMatiere').textContent = data.matiere || '—';
+      document.getElementById('infoType').textContent = typeLabel || '—';
+      document.getElementById('infoDate').textContent = data.date || '—';
+
+      // ----- Zone de visualisation -----
+      const viewerPlaceholder = document.getElementById('viewerPlaceholder');
+      const viewerFrame = document.getElementById('viewerFrame');
+      const firstFile = data.fichiers[0];
+      document.getElementById('viewerFileName').textContent = firstFile ? firstFile.nom : 'Fichier';
+
+      if (firstFile && firstFile.url && !firstFile.url.match(/\.(jpe?g|png|gif|webp)$/i)) {
+        viewerPlaceholder.style.display = 'none';
+        viewerFrame.style.display = 'block';
+        viewerFrame.src = firstFile.url;
+      } else if (firstFile && firstFile.url) {
+        // fichier image : on l'affiche directement plutôt que dans un iframe
+        viewerPlaceholder.style.display = 'none';
+        viewerFrame.style.display = 'none';
+        const img = document.createElement('img');
+        img.src = firstFile.url;
+        img.style.width = '100%';
+        img.style.display = 'block';
+        viewerFrame.parentNode.insertBefore(img, viewerFrame);
+      }
+
+      // ----- Liste des fichiers avec petit bouton de téléchargement individuel -----
+      function fileIconSvg(isImage) {
+        return isImage
+          ? '<svg viewBox="0 0 24 24"><path d="M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>'
+          : '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>';
+      }
+
+      function isImageFile(name) {
+        return /\.(jpe?g|png|gif|webp)$/i.test(name || '');
+      }
+
+      const filesList = document.getElementById('filesList');
+      const filesEmpty = document.getElementById('filesEmpty');
+      filesList.innerHTML = '';
+
+      if (data.fichiers.length === 0) {
+        filesEmpty.style.display = 'block';
+      } else {
+        filesEmpty.style.display = 'none';
+        data.fichiers.forEach(function(f) {
+          const isImage = isImageFile(f.nom);
+          const row = document.createElement('div');
+          row.className = 'file-row' + (isImage ? ' file-type-image' : '');
+
+          const downloadHref = f.url || '#';
+          row.innerHTML =
+            '<div class="file-icon">' + fileIconSvg(isImage) + '</div>' +
+            '<div class="file-info">' +
+              '<div class="file-name">' + f.nom + '</div>' +
+              '<div class="file-meta">' + (isImage ? 'Image' : 'PDF') + '</div>' +
+            '</div>' +
+            '<a class="file-download-btn" href="' + downloadHref + '" ' + (f.url ? 'download' : '') + ' title="Télécharger ' + f.nom + '" aria-label="Télécharger ' + f.nom + '">' +
+              '<svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>' +
+            '</a>';
+
+          if (!f.url) {
+            row.querySelector('.file-download-btn').addEventListener('click', function(e) {
+              e.preventDefault();
+              alert('Aucun fichier réel n\'est encore hébergé pour "' + f.nom + '" (document de démonstration).');
+            });
+          }
+
+          filesList.appendChild(row);
+        });
+      }
+
+      // ----- Bouton imprimer -----
+      document.getElementById('printBtn').addEventListener('click', function() {
+        window.print();
+      });
+
+      // ----- Retour à la matière -----
+      const relatedBack = document.getElementById('relatedBack');
+      relatedBack.href = classePage;
+      document.getElementById('relatedBackTitle').textContent =
+        'Retour à ' + (data.matiere ? data.matiere : (classeLabel || 'la liste des matières'));
+    }
+
+    if (docId) {
+      // ----- Mode réel : on va chercher le document via l'API -----
+      fetch(API_BASE_URL + '/documents/' + docId)
+        .then(function(res) {
+          if (!res.ok) throw new Error('not-found');
+          return res.json();
+        })
+        .then(function(body) {
+          const doc = body.document;
+          renderDocument({
+            titre: doc.titre,
+            description: doc.description,
+            classe: doc.classe_id,
+            matiere: doc.matiere_name,
+            type: doc.type,
+            date: new Date(doc.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('fr-FR'),
+            fichiers: doc.fichiers.map(function(f) { return { nom: f.original_name, url: f.url }; })
+          });
+        })
+        .catch(function() {
+          document.getElementById('docTitle').textContent = 'Document introuvable';
+          document.getElementById('docDescription').textContent =
+            "Ce document n'existe pas ou a été retiré, ou le serveur (" + API_BASE_URL + ") est inaccessible.";
+        });
+    } else {
+      // ----- Mode démo : anciens paramètres d'URL (rétrocompatibilité) -----
+      let fichiers = [];
+      try {
+        const rawFichiers = params.get('fichiers');
+        if (rawFichiers) fichiers = JSON.parse(rawFichiers);
+      } catch (e) {
+        fichiers = [];
+      }
+      if (fichiers.length === 0 && params.get('fichier')) {
+        fichiers = [{ nom: params.get('fichier'), url: params.get('fileUrl') || '' }];
+      }
+
+      renderDocument({
+        titre: params.get('titre') || 'Document sans titre',
+        description: params.get('description') || '',
+        classe: PAGE_CLASSE,
+        matiere: params.get('matiere') || '',
+        type: params.get('type') || '',
+        date: params.get('date') || '',
+        fichiers: fichiers
+      });
+    }
+
+    /* ----- Thème ----- */
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

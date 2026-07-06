@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devenir enseignant partenaire – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --danger: #f87171;
+      --success: #4ade80;
+      --success-soft: #0f2115;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre de navigation ----- */
+    .navbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg { width: 28px; height: 28px; fill: var(--accent); }
+
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-links > a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links > a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .nav-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-profile:hover { background: var(--accent-soft); transform: scale(1.05); }
+    .nav-profile svg { width: 18px; height: 18px; fill: var(--text-muted); transition: fill 0.2s ease; }
+    .nav-profile:hover svg { fill: var(--accent); }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); transform: rotate(15deg); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: var(--accent); transition: fill 0.35s ease; }
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Section principale ----- */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s ease;
+      align-self: flex-start;
+      max-width: 680px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .page-header {
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header p {
+      color: var(--text-soft);
+      font-size: 1.02rem;
+      line-height: 1.65;
+    }
+
+    .perks-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      max-width: 680px;
+      margin: 1.5rem auto 0;
+    }
+
+    .perk-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+    }
+
+    .perk-chip svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* ----- Carte formulaire ----- */
+    .form-wrapper { max-width: 680px; width: 100%; margin-top: 2.5rem; }
+
+    .form-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      padding: 2.25rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .form-section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1.1rem;
+      padding-top: 0.25rem;
+    }
+
+    .form-section-title:not(:first-child) {
+      margin-top: 1.75rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .field.full { grid-column: 1 / -1; }
+
+    .field label { font-size: 0.85rem; font-weight: 600; color: var(--text-soft); }
+    .required-mark { color: var(--danger); }
+
+    .field select,
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="tel"],
+    .field textarea {
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.8rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.35s ease;
+    }
+
+    .field select:focus,
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft2);
+    }
+
+    .field textarea { resize: vertical; min-height: 90px; }
+    .field-hint { font-size: 0.78rem; color: var(--text-muted); }
+    .field-error { font-size: 0.8rem; color: var(--danger); display: none; }
+    .field.invalid select,
+    .field.invalid input,
+    .field.invalid textarea { border-color: var(--danger); }
+    .field.invalid .field-error { display: block; }
+
+    /* ----- Groupes de cases à cocher ----- */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .checkbox-pill {
+      position: relative;
+    }
+
+    .checkbox-pill input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-pill label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .checkbox-pill .check-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border-strong);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .checkbox-pill .check-box svg {
+      width: 11px;
+      height: 11px;
+      fill: #fff;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .checkbox-pill input:checked + label {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .checkbox-pill input:checked + label .check-box {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .checkbox-pill input:checked + label .check-box svg { opacity: 1; }
+
+    .checkbox-pill input:focus-visible + label {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ----- Upload CV ----- */
+    .dropzone {
+      border: 2px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--accent-soft); }
+    .dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .dropzone svg { width: 28px; height: 28px; fill: var(--text-muted); margin-bottom: 0.5rem; }
+    .dropzone p { font-size: 0.88rem; color: var(--text-soft); }
+    .dropzone .dz-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .file-chip {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .file-chip.visible { display: flex; }
+    .file-chip svg { width: 16px; height: 16px; fill: var(--accent); flex-shrink: 0; }
+    .file-chip span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-chip button { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+    .file-chip button:hover { color: var(--danger); }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .checkbox-row input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
+    .link-muted { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .link-muted:hover { text-decoration: underline; }
+
+    .btn-primary {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.15s ease;
+      margin-top: 1.75rem;
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    /* ----- Écran de confirmation ----- */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 1rem 0.5rem;
+    }
+
+    .success-screen.visible { display: block; }
+    .form-card.hidden { display: none; }
+
+    .success-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 1.25rem;
+      border-radius: 50%;
+      background: var(--success-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-icon svg { width: 32px; height: 32px; fill: var(--success); }
+
+    .success-screen h2 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+
+    .success-screen p { color: var(--text-muted); font-size: 0.95rem; max-width: 440px; margin: 0 auto; line-height: 1.6; }
+
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    @media (max-width: 560px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-card { padding: 1.5rem; }
+      .page-header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="9eme.html">9ème</a>
+      <a href="ns4.html">NS4</a>
+      <div class="nav-tools">
+        <a href="auth.html" class="nav-profile" aria-label="Mon compte">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Retour à l'accueil
+    </a>
+
+    <div class="page-header">
+      <span class="section-label">Rejoignez notre équipe pédagogique</span>
+      <h1>Devenez enseignant partenaire</h1>
+      <p>Partagez vos leçons, exercices et corrigés avec des centaines d'élèves de 9ème et de NS4. Remplissez le formulaire ci-dessous, notre équipe étudiera votre candidature sous quelques jours.</p>
+    </div>
+
+    <div class="perks-row">
+      <span class="perk-chip">
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg>
+        Contenu vérifié par nos soins
+      </span>
+      <span class="perk-chip">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Candidature en 5 minutes
+      </span>
+      <span class="perk-chip">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/></svg>
+        Communauté d'enseignants
+      </span>
+    </div>
+
+    <div class="form-wrapper">
+      <div class="form-card" id="formCard">
+        <form id="candidatureForm" novalidate>
+          <!-- Informations personnelles -->
+          <div class="form-section-title">Vos informations</div>
+          <div class="form-grid">
+            <div class="field" id="field-nom">
+              <label for="inputNom">Nom complet <span class="required-mark">*</span></label>
+              <input type="text" id="inputNom" placeholder="Prénom Nom" required>
+              <span class="field-error">Veuillez saisir votre nom.</span>
+            </div>
+
+            <div class="field" id="field-email">
+              <label for="inputEmail">Adresse e-mail <span class="required-mark">*</span></label>
+              <input type="email" id="inputEmail" placeholder="vous@exemple.com" required>
+              <span class="field-error">Veuillez saisir une adresse e-mail valide.</span>
+            </div>
+
+            <div class="field" id="field-telephone">
+              <label for="inputTelephone">Téléphone <span class="required-mark">*</span></label>
+              <input type="tel" id="inputTelephone" placeholder="+xxx xx xxx xxxx" required>
+              <span class="field-error">Veuillez saisir un numéro de téléphone.</span>
+            </div>
+
+            <div class="field" id="field-diplome">
+              <label for="inputDiplome">Diplôme le plus élevé <span class="required-mark">*</span></label>
+              <select id="inputDiplome" required>
+                <option value="" disabled selected>Choisir une option</option>
+                <option value="licence">Licence</option>
+                <option value="master">Master</option>
+                <option value="doctorat">Doctorat</option>
+                <option value="autre">Autre</option>
+              </select>
+              <span class="field-error">Veuillez choisir une option.</span>
+            </div>
+          </div>
+
+          <!-- Classes et matières -->
+          <div class="form-section-title">Ce que vous souhaitez enseigner</div>
+          <div class="field full" style="margin-bottom: 1.1rem;" id="field-classes">
+            <label>Classe(s) concernée(s) <span class="required-mark">*</span></label>
+            <div class="checkbox-grid" id="classesGrid">
+              <div class="checkbox-pill">
+                <input type="checkbox" id="classe9eme" value="9eme">
+                <label for="classe9eme"><span class="check-box"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></span>9ème</label>
+              </div>
+              <div class="checkbox-pill">
+                <input type="checkbox" id="classeNs4" value="ns4">
+                <label for="classeNs4"><span class="check-box"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></span>NS4</label>
+              </div>
+            </div>
+            <span class="field-error">Veuillez choisir au moins une classe.</span>
+          </div>
+
+          <div class="field full" id="field-matieres">
+            <label>Matière(s) enseignée(s) <span class="required-mark">*</span></label>
+            <div class="checkbox-grid" id="matieresGrid"></div>
+            <span class="field-hint" id="matieresHint">Sélectionnez d'abord une classe pour voir les matières disponibles.</span>
+            <span class="field-error">Veuillez choisir au moins une matière.</span>
+          </div>
+
+          <!-- Expérience -->
+          <div class="form-section-title">Votre expérience</div>
+          <div class="field full" style="margin-bottom: 1.1rem;" id="field-experience">
+            <label for="inputExperience">Expérience d'enseignement <span class="required-mark">*</span></label>
+            <textarea id="inputExperience" placeholder="Ex : 5 ans d'enseignement des mathématiques en 9ème, tutorat particulier…" required></textarea>
+            <span class="field-error">Veuillez décrire votre expérience.</span>
+          </div>
+
+          <div class="field full" id="field-motivation">
+            <label for="inputMotivation">Lettre de motivation</label>
+            <textarea id="inputMotivation" placeholder="Pourquoi souhaitez-vous rejoindre PartageDocs ? (optionnel)"></textarea>
+          </div>
+
+          <!-- CV -->
+          <div class="form-section-title">Votre CV</div>
+          <div class="field full" id="field-cv">
+            <label>Fichier CV <span class="required-mark">*</span></label>
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="inputCv" accept=".pdf,.doc,.docx" required>
+              <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+              <p>Cliquez ou glissez votre CV ici</p>
+              <p class="dz-sub">PDF, DOC ou DOCX · 10 Mo maximum</p>
+            </div>
+            <div class="file-chip" id="fileChip">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+              <span id="fileChipName"></span>
+              <button type="button" id="removeFile">Retirer</button>
+            </div>
+            <span class="field-error">Veuillez joindre votre CV.</span>
+          </div>
+
+          <div class="field full" style="margin-top: 1.25rem;" id="field-terms">
+            <label class="checkbox-row">
+              <input type="checkbox" id="acceptTerms" required>
+              J'accepte que mes informations soient traitées par PartageDocs dans le cadre de l'étude de ma candidature, conformément à la <a href="privacy.html" class="link-muted" target="_blank">Politique de confidentialité</a>.
+            </label>
+            <span class="field-error">Veuillez accepter pour continuer.</span>
+          </div>
+
+          <button type="submit" class="btn-primary">Envoyer ma candidature</button>
+        </form>
+      </div>
+
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <h2>Candidature envoyée !</h2>
+        <p>Merci pour votre intérêt. Notre équipe pédagogique va étudier votre profil et reviendra vers vous par e-mail sous quelques jours.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 PartageDocs – Tous droits réservés
+  </footer>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé.
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+
+    /* Matières disponibles, chargées depuis l'API (mêmes données que 9eme.html / ns4.html) */
+    let MATIERES = { '9eme': [], 'ns4': [] };
+
+    function loadMatieres() {
+      return Promise.all([
+        fetch(API_BASE_URL + '/classes/9eme/matieres').then(function(r) { return r.json(); }),
+        fetch(API_BASE_URL + '/classes/ns4/matieres').then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        MATIERES['9eme'] = results[0].matieres || [];
+        MATIERES['ns4'] = results[1].matieres || [];
+      }).catch(function() {
+        alert('Impossible de contacter le serveur (' + API_BASE_URL + '). La liste des matières ne peut pas être chargée.');
+      });
+    }
+
+    const classe9eme = document.getElementById('classe9eme');
+    const classeNs4 = document.getElementById('classeNs4');
+    const matieresGrid = document.getElementById('matieresGrid');
+    const matieresHint = document.getElementById('matieresHint');
+
+    function updateMatieresOptions() {
+      const selectedClasses = [];
+      if (classe9eme.checked) selectedClasses.push('9eme');
+      if (classeNs4.checked) selectedClasses.push('ns4');
+
+      // Mémoriser les matières déjà cochées avant de reconstruire la liste
+      const previouslyChecked = Array.from(matieresGrid.querySelectorAll('input:checked')).map(function(i) { return i.value; });
+
+      matieresGrid.innerHTML = '';
+
+      if (selectedClasses.length === 0) {
+        matieresHint.style.display = 'block';
+        return;
+      }
+      matieresHint.style.display = 'none';
+
+      const seen = new Set();
+      selectedClasses.forEach(function(classe) {
+        MATIERES[classe].forEach(function(m) {
+          const key = classe + '-' + m.id;
+          if (seen.has(key)) return;
+          seen.add(key);
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'checkbox-pill';
+          const inputId = 'matiere-' + key;
+          wrapper.innerHTML =
+            '<input type="checkbox" id="' + inputId + '" value="' + key + '" data-name="' + m.name + '">' +
+            '<label for="' + inputId + '">' +
+              '<span class="check-box"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></span>' +
+              m.name + (selectedClasses.length > 1 ? ' (' + (classe === '9eme' ? '9ème' : 'NS4') + ')' : '') +
+            '</label>';
+          matieresGrid.appendChild(wrapper);
+
+          if (previouslyChecked.includes(key)) {
+            wrapper.querySelector('input').checked = true;
+          }
+        });
+      });
+    }
+
+    classe9eme.addEventListener('change', updateMatieresOptions);
+    classeNs4.addEventListener('change', updateMatieresOptions);
+    loadMatieres();
+
+    /* ----- Zone de dépôt du CV ----- */
+    const dropzone = document.getElementById('dropzone');
+    const inputCv = document.getElementById('inputCv');
+    const fileChip = document.getElementById('fileChip');
+    const fileChipName = document.getElementById('fileChipName');
+    const removeFileBtn = document.getElementById('removeFile');
+
+    inputCv.addEventListener('change', function() {
+      if (inputCv.files.length > 0) showSelectedFile(inputCv.files[0].name);
+    });
+
+    ['dragover', 'dragenter'].forEach(function(evt) {
+      dropzone.addEventListener(evt, function(e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(function(evt) {
+      dropzone.addEventListener(evt, function(e) { e.preventDefault(); dropzone.classList.remove('dragover'); });
+    });
+    dropzone.addEventListener('drop', function(e) {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        inputCv.files = files;
+        showSelectedFile(files[0].name);
+      }
+    });
+
+    function showSelectedFile(name) {
+      fileChipName.textContent = name;
+      fileChip.classList.add('visible');
+      setInvalid('field-cv', false);
+    }
+
+    removeFileBtn.addEventListener('click', function() {
+      inputCv.value = '';
+      fileChip.classList.remove('visible');
+    });
+
+    /* ----- Validation et soumission ----- */
+    function setInvalid(fieldId, invalid) {
+      document.getElementById(fieldId).classList.toggle('invalid', invalid);
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    document.getElementById('candidatureForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById('inputNom').value.trim();
+      const email = document.getElementById('inputEmail').value.trim();
+      const telephone = document.getElementById('inputTelephone').value.trim();
+      const diplome = document.getElementById('inputDiplome').value;
+      const experience = document.getElementById('inputExperience').value.trim();
+      const motivation = document.getElementById('inputMotivation').value.trim();
+      const cv = inputCv.files[0];
+      const terms = document.getElementById('acceptTerms').checked;
+
+      const classesCheckedInputs = [classe9eme, classeNs4].filter(function(c) { return c.checked; });
+      const matieresCheckedInputs = Array.from(matieresGrid.querySelectorAll('input:checked'));
+
+      const nomValid = nom.length > 0;
+      const emailValid = isValidEmail(email);
+      const telValid = telephone.length > 0;
+      const diplomeValid = !!diplome;
+      const experienceValid = experience.length > 0;
+      const cvValid = !!cv;
+      const classesChecked = classesCheckedInputs.length > 0;
+      const matieresChecked = matieresCheckedInputs.length > 0;
+
+      setInvalid('field-nom', !nomValid);
+      setInvalid('field-email', !emailValid);
+      setInvalid('field-telephone', !telValid);
+      setInvalid('field-diplome', !diplomeValid);
+      setInvalid('field-classes', !classesChecked);
+      setInvalid('field-matieres', !matieresChecked);
+      setInvalid('field-experience', !experienceValid);
+      setInvalid('field-cv', !cvValid);
+      setInvalid('field-terms', !terms);
+
+      const allValid = nomValid && emailValid && telValid && diplomeValid &&
+        classesChecked && matieresChecked && experienceValid && cvValid && terms;
+
+      if (!allValid) {
+        document.querySelector('.field.invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const classesArr = classesCheckedInputs.map(function(c) { return c.value; });
+      // dédoublonne les noms de matières (une matière peut être cochée pour 2 classes)
+      const matieresArr = Array.from(new Set(matieresCheckedInputs.map(function(i) { return i.dataset.name; })));
+
+      const formData = new FormData();
+      formData.append('nom', nom);
+      formData.append('email', email);
+      formData.append('telephone', telephone);
+      formData.append('diplome', diplome);
+      formData.append('classes', JSON.stringify(classesArr));
+      formData.append('matieres', JSON.stringify(matieresArr));
+      formData.append('experience', experience);
+      formData.append('motivation', motivation);
+      formData.append('cv', cv);
+
+      const submitBtn = document.querySelector('#candidatureForm button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+
+      fetch(API_BASE_URL + '/candidatures', { method: 'POST', body: formData })
+        .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+        .then(function(result) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Envoyer ma candidature';
+          if (!result.ok) {
+            alert(result.body.error || "Erreur lors de l'envoi de la candidature.");
+            return;
+          }
+          document.getElementById('formCard').classList.add('hidden');
+          document.getElementById('successScreen').classList.add('visible');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Envoyer ma candidature';
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + '). Vérifiez que le backend est démarré.');
+        });
+    });
+
+    /* ----- Thème ----- */
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion / Inscription – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --accent-soft3: #bfdbfe;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --accent-soft3: #1c2942;
+      --danger: #f87171;
+      --danger-soft: #2a1516;
+      --success: #4ade80;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre de navigation ----- */
+    .navbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--accent);
+      transition: fill 0.35s ease;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-links > a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links > a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .nav-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-profile:hover { transform: scale(1.05); }
+
+    .nav-profile svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent);
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      transform: rotate(15deg);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent);
+      transition: fill 0.35s ease;
+    }
+
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Section principale ----- */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .auth-wrapper {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .auth-header {
+      text-align: center;
+      padding: 2.25rem 2rem 1.5rem;
+    }
+
+    .auth-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.35s ease;
+    }
+
+    .auth-icon svg {
+      width: 26px;
+      height: 26px;
+      fill: var(--accent);
+    }
+
+    .auth-header h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .auth-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ----- Connexion sociale ----- */
+    .social-auth {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-social:hover {
+      background: var(--bg);
+      border-color: var(--border-strong);
+    }
+
+    .btn-social:active { transform: translateY(1px); }
+
+    .btn-social:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .btn-social svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .btn-social.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .social-spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border-strong);
+      border-top-color: var(--accent);
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .btn-social.loading .social-spinner { display: inline-block; }
+    .btn-social.loading .social-label-icon { display: none; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .social-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 1.25rem 2rem 0;
+    }
+
+    .social-divider::before,
+    .social-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ----- Onglets ----- */
+    .auth-tabs {
+      display: flex;
+      margin: 0 2rem 1.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.25rem;
+      position: relative;
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .auth-tab {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.55rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 7px;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: color 0.25s ease;
+    }
+
+    .auth-tab.active { color: var(--accent); }
+
+    .auth-tab-indicator {
+      position: absolute;
+      top: 0.25rem;
+      bottom: 0.25rem;
+      left: 0.25rem;
+      width: calc(50% - 0.25rem);
+      background: var(--bg-alt);
+      border-radius: 7px;
+      box-shadow: 0 2px 6px var(--shadow);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-tabs[data-active="signup"] .auth-tab-indicator {
+      transform: translateX(100%);
+    }
+
+    /* ----- Formulaires ----- */
+    .auth-forms {
+      position: relative;
+      padding: 0 2rem 2.25rem;
+    }
+
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 1.1rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .auth-form.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .field input {
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 0.85rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.35s ease;
+    }
+
+    .field input::placeholder { color: var(--text-muted); }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft2);
+    }
+
+    .field-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .field-error {
+      font-size: 0.8rem;
+      color: var(--danger);
+      display: none;
+    }
+
+    .field.invalid input { border-color: var(--danger); }
+    .field.invalid .field-error { display: block; }
+
+    .password-row {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.6rem;
+      top: 2.15rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.2rem 0.4rem;
+    }
+
+    .password-toggle:hover { color: var(--accent); }
+
+    .form-row-inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .checkbox-row input {
+      margin-top: 0.2rem;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .link-muted {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-muted:hover { text-decoration: underline; }
+
+    .btn-primary {
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.15s ease;
+      margin-top: 0.25rem;
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      margin: 0.25rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .strength-meter {
+      display: flex;
+      gap: 4px;
+      margin-top: 0.35rem;
+    }
+
+    .strength-meter span {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background 0.25s ease;
+    }
+
+    .auth-footer-note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 1.1rem 2rem 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 1.25rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      .auth-header, .auth-forms, .auth-footer-note {
+        padding-left: 1.4rem;
+        padding-right: 1.4rem;
+      }
+      .auth-tabs { margin-left: 1.4rem; margin-right: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="9eme.html">9ème</a>
+      <a href="ns4.html">NS4</a>
+      <div class="nav-tools">
+        <span class="nav-profile" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </span>
+        <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main>
+    <div class="auth-wrapper">
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Retour à l'accueil
+      </a>
+
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+            </svg>
+          </div>
+          <h1 id="authTitle">Bon retour parmi nous</h1>
+          <p id="authSubtitle">Connectez-vous pour accéder à votre espace</p>
+        </div>
+
+        <div class="social-auth">
+          <button type="button" class="btn-social" id="googleAuthBtn">
+            <span class="social-spinner" aria-hidden="true"></span>
+            <svg class="social-label-icon" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/>
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.6 18.9 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4 16 4 9.1 8.4 6.3 14.7z"/>
+              <path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5c-2 1.4-4.6 2.3-7.6 2.3-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9 39.6 15.9 44 24 44z"/>
+              <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.5 5.5C39.9 37.4 44 31.4 44 24c0-1.2-.1-2.3-.4-3.5z"/>
+            </svg>
+            <span>Continuer avec Google</span>
+          </button>
+          <button type="button" class="btn-social" id="facebookAuthBtn">
+            <span class="social-spinner" aria-hidden="true"></span>
+            <svg class="social-label-icon" viewBox="0 0 24 24">
+              <path fill="#1877F2" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07z"/>
+            </svg>
+            <span>Continuer avec Facebook</span>
+          </button>
+        </div>
+
+        <div class="social-divider">ou continuer avec e-mail</div>
+
+        <div class="auth-tabs" id="authTabs" data-active="login">
+          <div class="auth-tab-indicator"></div>
+          <button type="button" class="auth-tab active" id="tabLogin" aria-selected="true">Connexion</button>
+          <button type="button" class="auth-tab" id="tabSignup" aria-selected="false">Inscription</button>
+        </div>
+
+        <div class="auth-forms">
+          <!-- Formulaire de connexion -->
+          <form class="auth-form active" id="loginForm" novalidate>
+            <div class="field" id="loginEmailField">
+              <label for="loginEmail">Adresse e-mail</label>
+              <input type="email" id="loginEmail" name="email" placeholder="vous@exemple.com" autocomplete="email" required>
+              <span class="field-error">Veuillez saisir une adresse e-mail valide.</span>
+            </div>
+
+            <div class="field password-row" id="loginPasswordField">
+              <label for="loginPassword">Mot de passe</label>
+              <input type="password" id="loginPassword" name="password" placeholder="••••••••" autocomplete="current-password" required>
+              <button type="button" class="password-toggle" data-target="loginPassword">Afficher</button>
+              <span class="field-error">Veuillez saisir votre mot de passe.</span>
+            </div>
+
+            <div class="form-row-inline">
+              <label class="checkbox-row" style="align-items:center;">
+                <input type="checkbox" id="rememberMe">
+                Se souvenir de moi
+              </label>
+              <a href="#" class="link-muted" id="forgotPasswordLink">Mot de passe oublié ?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">Se connecter</button>
+          </form>
+
+          <!-- Formulaire d'inscription -->
+          <form class="auth-form" id="signupForm" novalidate>
+            <div class="field" id="signupNameField">
+              <label for="signupName">Nom complet</label>
+              <input type="text" id="signupName" name="name" placeholder="Prénom Nom" autocomplete="name" required>
+              <span class="field-error">Veuillez saisir votre nom.</span>
+            </div>
+
+            <div class="field" id="signupEmailField">
+              <label for="signupEmail">Adresse e-mail</label>
+              <input type="email" id="signupEmail" name="email" placeholder="vous@exemple.com" autocomplete="email" required>
+              <span class="field-error">Veuillez saisir une adresse e-mail valide.</span>
+            </div>
+
+            <div class="field password-row" id="signupPasswordField">
+              <label for="signupPassword">Mot de passe</label>
+              <input type="password" id="signupPassword" name="password" placeholder="8 caractères minimum" autocomplete="new-password" required minlength="8">
+              <button type="button" class="password-toggle" data-target="signupPassword">Afficher</button>
+              <div class="strength-meter" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <span class="field-error">8 caractères minimum requis.</span>
+            </div>
+
+            <div class="field password-row" id="signupConfirmField">
+              <label for="signupConfirm">Confirmer le mot de passe</label>
+              <input type="password" id="signupConfirm" name="confirm" placeholder="••••••••" autocomplete="new-password" required>
+              <button type="button" class="password-toggle" data-target="signupConfirm">Afficher</button>
+              <span class="field-error">Les mots de passe ne correspondent pas.</span>
+            </div>
+
+            <div class="field" id="signupCodeField">
+              <label for="signupCode">Code d'accès <span style="font-weight:400; color: var(--text-muted);">(optionnel)</span></label>
+              <input type="text" id="signupCode" name="accessCode" placeholder="Ex : ADM-7F2K9X" autocomplete="off" style="text-transform: uppercase;">
+              <span class="field-hint">Fourni par l'administration si vous êtes enseignant ou responsable. Laissez vide pour un compte élève standard.</span>
+              <span class="field-error" id="signupCodeError">Ce code est invalide, déjà utilisé, ou a été révoqué.</span>
+            </div>
+
+            <label class="checkbox-row">
+              <input type="checkbox" id="acceptTerms" required>
+              J'accepte les <a href="terms.html" class="link-muted" target="_blank">Conditions d'utilisation</a> et la <a href="privacy.html" class="link-muted" target="_blank">Politique de confidentialité</a>.
+            </label>
+
+            <button type="submit" class="btn-primary">Créer mon compte</button>
+          </form>
+        </div>
+
+        <div class="auth-footer-note" id="authFooterNote">
+          Pas encore de compte ? <a href="#" class="link-muted" id="switchToSignup">Inscrivez-vous</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 PartageDocs – Tous droits réservés
+  </footer>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé
+    // (ex: https://api.partagedocs.example.com/api).
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+
+    // ----- Thème -----
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
+    // ----- Onglets Connexion / Inscription -----
+    (function() {
+      const tabs = document.getElementById('authTabs');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const footerNote = document.getElementById('authFooterNote');
+
+      function showLogin() {
+        tabs.dataset.active = 'login';
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        tabLogin.setAttribute('aria-selected', 'true');
+        tabSignup.setAttribute('aria-selected', 'false');
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+        title.textContent = 'Bon retour parmi nous';
+        subtitle.textContent = 'Connectez-vous pour accéder à votre espace';
+        footerNote.innerHTML = 'Pas encore de compte ? <a href="#" class="link-muted" id="switchToSignup">Inscrivez-vous</a>';
+        document.getElementById('switchToSignup').addEventListener('click', function(e) {
+          e.preventDefault();
+          showSignup();
+        });
+      }
+
+      function showSignup() {
+        tabs.dataset.active = 'signup';
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        tabSignup.setAttribute('aria-selected', 'true');
+        tabLogin.setAttribute('aria-selected', 'false');
+        signupForm.classList.add('active');
+        loginForm.classList.remove('active');
+        title.textContent = 'Créer votre compte';
+        subtitle.textContent = 'Rejoignez PartageDocs en quelques secondes';
+        footerNote.innerHTML = 'Déjà inscrit ? <a href="#" class="link-muted" id="switchToLogin">Connectez-vous</a>';
+        document.getElementById('switchToLogin').addEventListener('click', function(e) {
+          e.preventDefault();
+          showLogin();
+        });
+      }
+
+      tabLogin.addEventListener('click', showLogin);
+      tabSignup.addEventListener('click', showSignup);
+      document.getElementById('switchToSignup').addEventListener('click', function(e) {
+        e.preventDefault();
+        showSignup();
+      });
+    })();
+
+    // ----- Connexion sociale (Google / Facebook) -----
+    // Le backend gère tout le flux OAuth (redirection vers Google/Facebook,
+    // échange du code, création/connexion du compte) puis renvoie vers
+    // oauth-callback.html avec le jeton de session.
+    document.getElementById('googleAuthBtn').addEventListener('click', function() {
+      this.classList.add('loading');
+      window.location.href = API_BASE_URL + '/auth/google';
+    });
+
+    document.getElementById('facebookAuthBtn').addEventListener('click', function() {
+      this.classList.add('loading');
+      window.location.href = API_BASE_URL + '/auth/facebook';
+    });
+
+    // Si l'utilisateur revient ici après une erreur OAuth (voir oauth.js côté backend)
+    (function() {
+      const p = new URLSearchParams(window.location.search);
+      const err = p.get('oauth_error');
+      if (err) alert('La connexion via ' + err + ' a échoué. Réessayez ou utilisez e-mail/mot de passe.');
+    })();
+
+    // ----- Afficher / masquer mot de passe -----
+    document.querySelectorAll('.password-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const input = document.getElementById(btn.dataset.target);
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        btn.textContent = isHidden ? 'Masquer' : 'Afficher';
+      });
+    });
+
+    // ----- Indicateur de robustesse du mot de passe -----
+    (function() {
+      const pwInput = document.getElementById('signupPassword');
+      const bars = document.querySelectorAll('#signupPasswordField .strength-meter span');
+      const colors = ['#dc2626', '#f59e0b', '#eab308', '#16a34a'];
+
+      pwInput.addEventListener('input', function() {
+        const val = pwInput.value;
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+        if (/\d/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        bars.forEach(function(bar, i) {
+          bar.style.background = i < score ? colors[score - 1] : 'var(--border)';
+        });
+      });
+    })();
+
+    // ----- Validation simple -----
+    function setInvalid(fieldId, invalid) {
+      const field = document.getElementById(fieldId);
+      field.classList.toggle('invalid', invalid);
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    // ----- Validation simple -----
+    function setInvalid(fieldId, invalid) {
+      const field = document.getElementById(fieldId);
+      field.classList.toggle('invalid', invalid);
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    const ROLE_REDIRECT = { 'membre': 'index.html', 'admin': 'admin.html', 'super-admin': 'super-admin.html' };
+
+    function saveAuthAndRedirect(token, user) {
+      localStorage.setItem('partagedocs-auth', JSON.stringify({ token: token, user: user }));
+      window.location.href = ROLE_REDIRECT[user.role] || 'index.html';
+    }
+
+    function setFormLoading(form, loading) {
+      const btn = form.querySelector('button[type="submit"]');
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
+      btn.textContent = loading ? 'Veuillez patienter…' : btn.dataset.originalText;
+    }
+
+    // ----- Connexion -----
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const emailValid = isValidEmail(email);
+      const passwordValid = password.length > 0;
+
+      setInvalid('loginEmailField', !emailValid);
+      setInvalid('loginPasswordField', !passwordValid);
+
+      if (!(emailValid && passwordValid)) return;
+
+      setFormLoading(loginForm, true);
+      fetch(API_BASE_URL + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      })
+        .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+        .then(function(result) {
+          setFormLoading(loginForm, false);
+          if (!result.ok) {
+            setInvalid('loginPasswordField', true);
+            document.querySelector('#loginPasswordField .field-error').textContent = result.body.error || 'Connexion impossible.';
+            return;
+          }
+          saveAuthAndRedirect(result.body.token, result.body.user);
+        })
+        .catch(function() {
+          setFormLoading(loginForm, false);
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + '). Vérifiez que le backend est démarré.');
+        });
+    });
+
+    // ----- Inscription -----
+    const signupForm = document.getElementById('signupForm');
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+      const accessCode = document.getElementById('signupCode').value.trim();
+      const terms = document.getElementById('acceptTerms').checked;
+
+      const nameValid = name.length > 0;
+      const emailValid = isValidEmail(email);
+      const passwordValid = password.length >= 8;
+      const confirmValid = confirm === password && confirm.length > 0;
+
+      setInvalid('signupNameField', !nameValid);
+      setInvalid('signupEmailField', !emailValid);
+      setInvalid('signupPasswordField', !passwordValid);
+      setInvalid('signupConfirmField', !confirmValid);
+      setInvalid('signupCodeField', false);
+
+      if (!(nameValid && emailValid && passwordValid && confirmValid)) return;
+      if (!terms) {
+        alert('Veuillez accepter les conditions d\'utilisation pour continuer.');
+        return;
+      }
+
+      setFormLoading(signupForm, true);
+      fetch(API_BASE_URL + '/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: password, accessCode: accessCode })
+      })
+        .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+        .then(function(result) {
+          setFormLoading(signupForm, false);
+          if (!result.ok) {
+            if (accessCode) setInvalid('signupCodeField', true);
+            else setInvalid('signupEmailField', true);
+            alert(result.body.error || 'Impossible de créer le compte.');
+            return;
+          }
+          saveAuthAndRedirect(result.body.token, result.body.user);
+        })
+        .catch(function() {
+          setFormLoading(signupForm, false);
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + '). Vérifiez que le backend est démarré.');
+        });
+    });
+  </script>
+</body>
+</html>

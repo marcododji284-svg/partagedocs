@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Administrateur – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --danger: #f87171;
+      --danger-soft: #2a1516;
+      --success: #4ade80;
+      --success-soft: #0f2115;
+      --warning: #fbbf24;
+      --warning-soft: #2a2010;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre supérieure ----- */
+    .admin-topbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg { width: 24px; height: 24px; fill: var(--accent); }
+
+    .admin-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      margin-left: 0.3rem;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .topbar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .topbar-link:hover { background: var(--accent-soft); color: var(--accent); }
+    .topbar-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); transform: rotate(15deg); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 19px; height: 19px; fill: var(--accent); }
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Mise en page ----- */
+    .admin-layout {
+      display: flex;
+      min-height: calc(100vh - 61px);
+    }
+
+    /* ----- Barre latérale ----- */
+    .admin-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--bg-alt);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .sidebar-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .sidebar-item svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+
+    .sidebar-item:hover { background: var(--accent-soft); color: var(--accent); }
+
+    .sidebar-item.active {
+      background: var(--accent-soft2);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .sidebar-item.disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .sidebar-item.disabled:hover { background: none; color: var(--text-soft); }
+
+    .soon-tag {
+      margin-left: auto;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    /* ----- Contenu principal ----- */
+    .admin-main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1100px;
+    }
+
+    .admin-view { display: none; }
+    .admin-view.active { display: block; }
+
+    .view-header { margin-bottom: 1.75rem; }
+
+    .view-header h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .view-header p { color: var(--text-muted); font-size: 0.92rem; }
+
+    /* ----- Carte formulaire ----- */
+    .form-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      padding: 2rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .required-mark { color: var(--danger); }
+
+    .field select,
+    .field input[type="text"],
+    .field textarea {
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.8rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.35s ease;
+    }
+
+    .field select:focus,
+    .field input[type="text"]:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft2);
+    }
+
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .field-hint { font-size: 0.78rem; color: var(--text-muted); }
+    .field-error { font-size: 0.8rem; color: var(--danger); display: none; }
+    .field.invalid select,
+    .field.invalid input,
+    .field.invalid textarea { border-color: var(--danger); }
+    .field.invalid .field-error { display: block; }
+
+    .field select:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ----- Zone d'upload de fichier ----- */
+    .dropzone {
+      border: 2px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .dropzone svg { width: 30px; height: 30px; fill: var(--text-muted); margin-bottom: 0.5rem; }
+
+    .dropzone p { font-size: 0.88rem; color: var(--text-soft); }
+    .dropzone .dz-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .file-chip {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .file-chip.visible { display: flex; }
+    .file-chip svg { width: 16px; height: 16px; fill: var(--accent); flex-shrink: 0; }
+    .file-chip span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .file-chip button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .file-chip button:hover { color: var(--danger); }
+
+    /* ----- Statut (radio en boutons) ----- */
+    .status-toggle {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .status-option {
+      flex: 1;
+      position: relative;
+    }
+
+    .status-option input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      cursor: pointer;
+    }
+
+    .status-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .status-option input:checked + label {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .status-option label svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-secondary {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    .btn-primary {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.4rem;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .form-success {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--success-soft);
+      border: 1px solid var(--success);
+      color: var(--success);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-success.visible { display: flex; }
+    .form-success svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+
+    /* ----- Vue : gérer les documents ----- */
+    .manage-toolbar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .manage-toolbar select,
+    .manage-toolbar input {
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+    }
+
+    .manage-toolbar input { flex: 1; min-width: 180px; }
+
+    .docs-table-wrapper {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    table.docs-table { width: 100%; border-collapse: collapse; }
+
+    .docs-table th {
+      text-align: left;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .docs-table td {
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .docs-table tr:last-child td { border-bottom: none; }
+
+    .doc-title-cell { font-weight: 600; }
+    .doc-file-cell { color: var(--text-muted); font-size: 0.82rem; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .badge-lecon { background: var(--accent-soft); color: var(--accent); }
+    .badge-exercice { background: var(--warning-soft); color: var(--warning); }
+    .badge-corrige { background: var(--success-soft); color: var(--success); }
+
+    .badge-status-publie { background: var(--success-soft); color: var(--success); }
+    .badge-status-brouillon { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .row-actions { display: flex; gap: 0.4rem; }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .icon-btn svg { width: 14px; height: 14px; fill: var(--text-muted); }
+    .icon-btn:hover { border-color: var(--border-strong); background: var(--bg); }
+    .icon-btn.danger:hover { border-color: var(--danger); }
+    .icon-btn.danger:hover svg { fill: var(--danger); }
+
+    .table-empty {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    @media (max-width: 860px) {
+      .admin-layout { flex-direction: column; }
+      .admin-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+      }
+      .sidebar-nav { flex-direction: row; margin-bottom: 0; }
+      .sidebar-section-label { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .admin-main { padding: 1.25rem; }
+      .docs-table-wrapper { overflow-x: auto; }
+      table.docs-table { min-width: 720px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre supérieure -->
+  <div class="admin-topbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs <span class="admin-badge">Admin</span>
+    </a>
+    <div class="topbar-right">
+      <a href="index.html" class="topbar-link">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Retour au site
+      </a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+        <svg class="icon-sun" viewBox="0 0 24 24">
+          <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24">
+          <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+        </svg>
+      </button>
+      <button class="topbar-link" id="logoutBtn" type="button" style="border:none; cursor:pointer; background:none; font-family:inherit;">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L17.17 10H8v2h9.17l-1.58 1.59L17 15l4-4zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Barre latérale -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section-label">Contenu</div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" id="navAdd" type="button">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Ajouter un document
+        </button>
+        <button class="sidebar-item" id="navManage" type="button">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          Documents publiés
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label">Structure</div>
+      <nav class="sidebar-nav">
+        <span class="sidebar-item disabled" title="Réservé au Super Admin">
+          <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 3a8.99 8.99 0 00-.66-2.6l1.6-1.24-2-3.46-1.9.76a8.99 8.99 0 00-2.25-1.3L15.4 1h-4l-.33 2.16a8.99 8.99 0 00-2.25 1.3l-1.9-.76-2 3.46 1.6 1.24A8.99 8.99 0 006 11a8.99 8.99 0 00.66 2.6l-1.6 1.24 2 3.46 1.9-.76a8.99 8.99 0 002.25 1.3L11.6 21h4l.33-2.16a8.99 8.99 0 002.25-1.3l1.9.76 2-3.46-1.6-1.24c.4-.83.62-1.7.66-2.6z"/></svg>
+          Gérer les matières
+          <span class="soon-tag">Super Admin</span>
+        </span>
+      </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+      <!-- ===== Vue : Ajouter un document ===== -->
+      <div class="admin-view active" id="viewAdd">
+        <div class="view-header">
+          <h1>Ajouter un document</h1>
+          <p>Ajoutez une leçon, un exercice à faire ou un corrigé dans une matière déjà existante.</p>
+        </div>
+
+        <div class="form-success" id="formSuccess">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>Document ajouté avec succès.</span>
+        </div>
+
+        <div class="form-card">
+          <form id="addDocForm" novalidate>
+            <div class="form-grid">
+              <div class="field" id="field-classe">
+                <label for="inputClasse">Classe <span class="required-mark">*</span></label>
+                <select id="inputClasse" required>
+                  <option value="" disabled selected>Choisir une classe</option>
+                  <option value="9eme">9ème</option>
+                  <option value="ns4">NS4</option>
+                </select>
+                <span class="field-error">Veuillez choisir une classe.</span>
+              </div>
+
+              <div class="field" id="field-matiere">
+                <label for="inputMatiere">Matière <span class="required-mark">*</span></label>
+                <select id="inputMatiere" required disabled>
+                  <option value="" disabled selected>Choisir d'abord une classe</option>
+                </select>
+                <span class="field-error">Veuillez choisir une matière.</span>
+                <span class="field-hint">La liste des matières viendra plus tard de l'espace Super Admin.</span>
+              </div>
+
+              <div class="field" id="field-type">
+                <label for="inputType">Type de contenu <span class="required-mark">*</span></label>
+                <select id="inputType" required>
+                  <option value="" disabled selected>Choisir un type</option>
+                  <option value="lecons">Leçon</option>
+                  <option value="exercices">Exercice à faire</option>
+                  <option value="corriges">Exercice corrigé</option>
+                </select>
+                <span class="field-error">Veuillez choisir un type de contenu.</span>
+              </div>
+
+              <div class="field" id="field-titre">
+                <label for="inputTitre">Titre du document <span class="required-mark">*</span></label>
+                <input type="text" id="inputTitre" placeholder="Ex : Les équations du premier degré" required>
+                <span class="field-error">Veuillez saisir un titre.</span>
+              </div>
+
+              <div class="field full" id="field-description">
+                <label for="inputDescription">Description courte</label>
+                <textarea id="inputDescription" placeholder="Ex : Cours complet avec exemples détaillés"></textarea>
+                <span class="field-hint">Affichée sous le titre dans la liste des documents.</span>
+              </div>
+
+              <div class="field full" id="field-fichier">
+                <label>Fichier <span class="required-mark">*</span></label>
+                <div class="dropzone" id="dropzone">
+                  <input type="file" id="inputFichier" accept=".pdf,.jpg,.jpeg,.png" required>
+                  <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                  <p>Cliquez ou glissez un fichier ici</p>
+                  <p class="dz-sub">PDF, JPG ou PNG · 10 Mo maximum</p>
+                </div>
+                <div class="file-chip" id="fileChip">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  <span id="fileChipName"></span>
+                  <button type="button" id="removeFile">Retirer</button>
+                </div>
+                <span class="field-error">Veuillez sélectionner un fichier.</span>
+              </div>
+
+              <div class="field full" id="field-statut">
+                <label>Statut de publication</label>
+                <div class="status-toggle">
+                  <div class="status-option">
+                    <input type="radio" name="statut" id="statutPublie" value="publie" checked>
+                    <label for="statutPublie">
+                      <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10z"/></svg>
+                      Publié
+                    </label>
+                  </div>
+                  <div class="status-option">
+                    <input type="radio" name="statut" id="statutBrouillon" value="brouillon">
+                    <label for="statutBrouillon">
+                      <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                      Brouillon
+                    </label>
+                  </div>
+                </div>
+                <span class="field-hint">Un brouillon reste invisible pour les élèves tant qu'il n'est pas publié.</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" id="resetForm">Réinitialiser</button>
+              <button type="submit" class="btn-primary">Ajouter le document</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===== Vue : Documents publiés (gestion) ===== -->
+      <div class="admin-view" id="viewManage">
+        <div class="view-header">
+          <h1>Documents publiés</h1>
+          <p>Retrouvez, modifiez ou supprimez les documents déjà ajoutés.</p>
+        </div>
+
+        <div class="manage-toolbar">
+          <input type="text" id="searchDocs" placeholder="Rechercher un titre…">
+          <select id="filterClasse">
+            <option value="">Toutes les classes</option>
+            <option value="9eme">9ème</option>
+            <option value="ns4">NS4</option>
+          </select>
+          <select id="filterType">
+            <option value="">Tous les types</option>
+            <option value="lecons">Leçon</option>
+            <option value="exercices">Exercice à faire</option>
+            <option value="corriges">Exercice corrigé</option>
+          </select>
+        </div>
+
+        <div class="docs-table-wrapper">
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Classe</th>
+                <th>Matière</th>
+                <th>Type</th>
+                <th>Fichier</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="docsTableBody"></tbody>
+          </table>
+          <div class="table-empty" id="tableEmpty" style="display:none;">Aucun document ne correspond à votre recherche.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé.
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+
+    /* ----- Garde d'accès : admin ou super-admin uniquement ----- */
+    const authRaw = localStorage.getItem('partagedocs-auth');
+    const auth = authRaw ? JSON.parse(authRaw) : null;
+
+    if (!auth || !['admin', 'super-admin'].includes(auth.user.role)) {
+      window.location.href = 'auth.html';
+    }
+
+    function authHeaders() {
+      return { 'Authorization': 'Bearer ' + auth.token };
+    }
+
+    function handleAuthError(res) {
+      if (res.status === 401) {
+        localStorage.removeItem('partagedocs-auth');
+        window.location.href = 'auth.html';
+        return true;
+      }
+      return false;
+    }
+
+    const TYPE_LABELS = { lecons: 'Leçon', exercices: 'Exercice à faire', corriges: 'Exercice corrigé' };
+    const TYPE_BADGE_CLASS = { lecons: 'badge-lecon', exercices: 'badge-exercice', corriges: 'badge-corrige' };
+    let CLASSE_LABELS = {}; // rempli dynamiquement depuis /api/classes
+
+    /* ----- Navigation entre vues ----- */
+    const navAdd = document.getElementById('navAdd');
+    const navManage = document.getElementById('navManage');
+    const viewAdd = document.getElementById('viewAdd');
+    const viewManage = document.getElementById('viewManage');
+
+    function showView(view) {
+      [navAdd, navManage].forEach(function(btn) { btn.classList.remove('active'); });
+      [viewAdd, viewManage].forEach(function(v) { v.classList.remove('active'); });
+      if (view === 'add') {
+        navAdd.classList.add('active');
+        viewAdd.classList.add('active');
+      } else {
+        navManage.classList.add('active');
+        viewManage.classList.add('active');
+        renderTable();
+      }
+    }
+
+    navAdd.addEventListener('click', function() { showView('add'); });
+    navManage.addEventListener('click', function() { showView('manage'); });
+
+    /* ----- Chargement des classes (au démarrage) ----- */
+    const inputClasse = document.getElementById('inputClasse');
+    const inputMatiere = document.getElementById('inputMatiere');
+    const filterClasse = document.getElementById('filterClasse');
+
+    function loadClasses() {
+      return fetch(API_BASE_URL + '/classes')
+        .then(function(res) { return res.json(); })
+        .then(function(body) {
+          inputClasse.innerHTML = '<option value="" disabled selected>Choisir une classe</option>';
+          filterClasse.innerHTML = '<option value="">Toutes les classes</option>';
+          body.classes.forEach(function(c) {
+            CLASSE_LABELS[c.id] = c.name;
+
+            const opt1 = document.createElement('option');
+            opt1.value = c.id; opt1.textContent = c.name;
+            inputClasse.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = c.id; opt2.textContent = c.name;
+            filterClasse.appendChild(opt2);
+          });
+        })
+        .catch(function() {
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + '). Vérifiez que le backend est démarré.');
+        });
+    }
+
+    /* ----- Sélecteur Classe -> Matière dépendant (chargé depuis l'API) ----- */
+    inputClasse.addEventListener('change', function() {
+      const classe = inputClasse.value;
+      inputMatiere.innerHTML = '<option value="">Chargement…</option>';
+      inputMatiere.disabled = true;
+
+      fetch(API_BASE_URL + '/classes/' + classe + '/matieres')
+        .then(function(res) { return res.json(); })
+        .then(function(body) {
+          const matieres = body.matieres || [];
+          inputMatiere.innerHTML = '';
+
+          if (matieres.length === 0) {
+            inputMatiere.disabled = true;
+            const opt = document.createElement('option');
+            opt.value = ''; opt.textContent = 'Aucune matière disponible';
+            opt.disabled = true; opt.selected = true;
+            inputMatiere.appendChild(opt);
+            return;
+          }
+
+          inputMatiere.disabled = false;
+          const placeholder = document.createElement('option');
+          placeholder.value = ''; placeholder.disabled = true; placeholder.selected = true;
+          placeholder.textContent = 'Choisir une matière';
+          inputMatiere.appendChild(placeholder);
+
+          matieres.forEach(function(m) {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.name;
+            inputMatiere.appendChild(opt);
+          });
+
+          setInvalid('field-classe', false);
+        });
+    });
+
+    /* ----- Zone de dépôt de fichier ----- */
+    const dropzone = document.getElementById('dropzone');
+    const inputFichier = document.getElementById('inputFichier');
+    const fileChip = document.getElementById('fileChip');
+    const fileChipName = document.getElementById('fileChipName');
+    const removeFileBtn = document.getElementById('removeFile');
+
+    inputFichier.addEventListener('change', function() {
+      if (inputFichier.files.length > 0) {
+        showSelectedFile(inputFichier.files[0].name);
+      }
+    });
+
+    ['dragover', 'dragenter'].forEach(function(evt) {
+      dropzone.addEventListener(evt, function(e) {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(function(evt) {
+      dropzone.addEventListener(evt, function(e) {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        inputFichier.files = files;
+        showSelectedFile(files[0].name);
+      }
+    });
+
+    function showSelectedFile(name) {
+      fileChipName.textContent = name;
+      fileChip.classList.add('visible');
+      setInvalid('field-fichier', false);
+    }
+
+    removeFileBtn.addEventListener('click', function() {
+      inputFichier.value = '';
+      fileChip.classList.remove('visible');
+    });
+
+    /* ----- Validation et soumission du formulaire ----- */
+    const addDocForm = document.getElementById('addDocForm');
+    const formSuccess = document.getElementById('formSuccess');
+
+    function setInvalid(fieldId, invalid) {
+      document.getElementById(fieldId).classList.toggle('invalid', invalid);
+    }
+
+    function resetAddForm() {
+      addDocForm.reset();
+      inputMatiere.innerHTML = '<option value="" disabled selected>Choisir d\'abord une classe</option>';
+      inputMatiere.disabled = true;
+      fileChip.classList.remove('visible');
+      ['field-classe', 'field-matiere', 'field-type', 'field-titre', 'field-fichier'].forEach(function(id) {
+        setInvalid(id, false);
+      });
+    }
+
+    addDocForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const classe = inputClasse.value;
+      const matiere = inputMatiere.value;
+      const type = document.getElementById('inputType').value;
+      const titre = document.getElementById('inputTitre').value.trim();
+      const description = document.getElementById('inputDescription').value.trim();
+      const fichier = inputFichier.files[0];
+      const statut = document.querySelector('input[name="statut"]:checked').value;
+
+      const classeValid = !!classe;
+      const matiereValid = !!matiere;
+      const typeValid = !!type;
+      const titreValid = titre.length > 0;
+      const fichierValid = !!fichier;
+
+      setInvalid('field-classe', !classeValid);
+      setInvalid('field-matiere', !matiereValid);
+      setInvalid('field-type', !typeValid);
+      setInvalid('field-titre', !titreValid);
+      setInvalid('field-fichier', !fichierValid);
+
+      if (!(classeValid && matiereValid && typeValid && titreValid && fichierValid)) {
+        return;
+      }
+
+      const submitBtn = addDocForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+
+      const formData = new FormData();
+      formData.append('classe', classe);
+      formData.append('matiere', matiere);
+      formData.append('type', type);
+      formData.append('titre', titre);
+      formData.append('description', description);
+      formData.append('statut', statut);
+      formData.append('fichiers', fichier);
+
+      fetch(API_BASE_URL + '/documents', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: formData
+      })
+        .then(function(res) {
+          if (handleAuthError(res)) return null;
+          return res.json().then(function(body) { return { ok: res.ok, body: body }; });
+        })
+        .then(function(result) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Ajouter le document';
+          if (!result) return;
+          if (!result.ok) {
+            alert(result.body.error || "Erreur lors de l'ajout du document.");
+            return;
+          }
+          formSuccess.classList.add('visible');
+          setTimeout(function() { formSuccess.classList.remove('visible'); }, 3500);
+          resetAddForm();
+        })
+        .catch(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Ajouter le document';
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + ').');
+        });
+    });
+
+    document.getElementById('resetForm').addEventListener('click', resetAddForm);
+
+    /* ----- Vue : Gérer les documents (tableau, alimenté par l'API) ----- */
+    const searchDocs = document.getElementById('searchDocs');
+    const filterType = document.getElementById('filterType');
+    const docsTableBody = document.getElementById('docsTableBody');
+    const tableEmpty = document.getElementById('tableEmpty');
+
+    [searchDocs, filterClasse, filterType].forEach(function(el) {
+      el.addEventListener('input', renderTable);
+    });
+
+    function renderTable() {
+      const search = searchDocs.value.trim().toLowerCase();
+      const classe = filterClasse.value;
+      const type = filterType.value;
+
+      const query = new URLSearchParams();
+      if (classe) query.set('classe', classe);
+      if (type) query.set('type', type);
+
+      fetch(API_BASE_URL + '/documents?' + query.toString(), { headers: authHeaders() })
+        .then(function(res) {
+          if (handleAuthError(res)) return null;
+          return res.json();
+        })
+        .then(function(body) {
+          if (!body) return;
+          const filtered = body.documents.filter(function(doc) {
+            return doc.titre.toLowerCase().includes(search);
+          });
+
+          docsTableBody.innerHTML = '';
+
+          if (filtered.length === 0) {
+            tableEmpty.style.display = 'block';
+            return;
+          }
+          tableEmpty.style.display = 'none';
+
+          filtered.forEach(function(doc) {
+            const fichierNoms = doc.fichiers.map(function(f) { return f.original_name; }).join(', ') || '—';
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+              '<td class="doc-title-cell">' + doc.titre + '</td>' +
+              '<td>' + (CLASSE_LABELS[doc.classe_id] || doc.classe_name) + '</td>' +
+              '<td>' + doc.matiere_name + '</td>' +
+              '<td><span class="badge ' + TYPE_BADGE_CLASS[doc.type] + '">' + TYPE_LABELS[doc.type] + '</span></td>' +
+              '<td class="doc-file-cell">' + fichierNoms + '</td>' +
+              '<td><span class="badge badge-status-' + doc.statut + '">' + (doc.statut === 'publie' ? 'Publié' : 'Brouillon') + '</span></td>' +
+              '<td>' +
+                '<div class="row-actions">' +
+                  '<button class="icon-btn" data-toggle="' + doc.id + '" title="Basculer publié/brouillon" type="button">' +
+                    '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10z"/></svg>' +
+                  '</button>' +
+                  '<button class="icon-btn danger" data-delete="' + doc.id + '" title="Supprimer" type="button">' +
+                    '<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                  '</button>' +
+                '</div>' +
+              '</td>';
+            docsTableBody.appendChild(tr);
+          });
+
+          docsTableBody.querySelectorAll('[data-toggle]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              const id = btn.getAttribute('data-toggle');
+              fetch(API_BASE_URL + '/documents/' + id + '/statut', { method: 'PATCH', headers: authHeaders() })
+                .then(function(res) { if (!handleAuthError(res)) renderTable(); });
+            });
+          });
+
+          docsTableBody.querySelectorAll('[data-delete]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              const id = btn.getAttribute('data-delete');
+              if (!confirm('Supprimer définitivement ce document ?')) return;
+              fetch(API_BASE_URL + '/documents/' + id, { method: 'DELETE', headers: authHeaders() })
+                .then(function(res) { if (!handleAuthError(res)) renderTable(); });
+            });
+          });
+        })
+        .catch(function() {
+          alert('Impossible de contacter le serveur (' + API_BASE_URL + ').');
+        });
+    }
+
+    /* ----- Déconnexion ----- */
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      if (confirm('Se déconnecter de l\'espace administrateur ?')) {
+        localStorage.removeItem('partagedocs-auth');
+        window.location.href = 'auth.html';
+      }
+    });
+
+    /* ----- Initialisation ----- */
+    loadClasses();
+
+    /* ----- Thème ----- */
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NS4 – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --accent-soft3: #bfdbfe;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --accent-soft3: #1c2942;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre de navigation ----- */
+    .navbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg { width: 28px; height: 28px; fill: var(--accent); transition: fill 0.35s ease; }
+
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a.current { color: var(--accent); }
+
+    .nav-links > a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links a.current::after { width: 100%; }
+    .nav-links > a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .nav-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-profile:hover { background: var(--accent-soft); transform: scale(1.05); }
+    .nav-profile svg { width: 18px; height: 18px; fill: var(--text-muted); transition: fill 0.2s ease; }
+    .nav-profile:hover svg { fill: var(--accent); }
+
+    .nav-menu-wrapper { position: relative; flex-shrink: 0; }
+
+    .nav-menu-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-menu-btn:hover, .nav-menu-wrapper.open .nav-menu-btn { background: var(--accent-soft); }
+    .nav-menu-btn svg { width: 16px; height: 16px; fill: var(--text-muted); transition: fill 0.2s ease; }
+    .nav-menu-btn:hover svg, .nav-menu-wrapper.open .nav-menu-btn svg { fill: var(--accent); }
+
+    .nav-menu-dropdown {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      min-width: 190px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 12px 28px var(--shadow-hover);
+      padding: 0.4rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      z-index: 60;
+    }
+
+    .nav-menu-wrapper.open .nav-menu-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    .nav-menu-dropdown a {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-menu-dropdown a:hover { background: var(--accent-soft); color: var(--accent); }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); transform: rotate(15deg); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 20px; height: 20px; fill: var(--accent); transition: fill 0.35s ease; }
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Section principale ----- */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 2rem 3rem;
+      width: 100%;
+    }
+
+    .page-header {
+      max-width: 720px;
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header p {
+      color: var(--text-soft);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      justify-content: center;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb a:hover { color: var(--accent); }
+
+    /* ----- Vue : grille des matières ----- */
+    #subjectsView { width: 100%; max-width: 1100px; }
+
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .subject-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, background 0.35s;
+      box-shadow: 0 4px 12px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subject-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .subject-card:hover::before { transform: scaleX(1); }
+
+    .subject-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px var(--shadow-hover);
+      border-color: var(--border-strong);
+    }
+
+    .subject-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .subject-icon {
+      background: var(--accent-soft);
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.1rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      transition: background 0.35s ease, transform 0.25s ease;
+    }
+
+    .subject-card:hover .subject-icon { transform: scale(1.08); }
+
+    .subject-card h3 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .subject-count {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .subjects-empty {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: 16px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ----- Vue : détail d'une matière ----- */
+    #subjectDetailView {
+      width: 100%;
+      max-width: 900px;
+      display: none;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .subject-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .subject-detail-icon {
+      background: var(--accent-soft);
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .subject-detail-header h2 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .subject-detail-header p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    /* ----- Onglets Leçons / Exercices / Corrigés ----- */
+    .doc-tabs {
+      display: flex;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+      overflow-x: auto;
+    }
+
+    .doc-tab {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.75rem 1.1rem;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    .doc-tab .doc-tab-count {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 0.05rem 0.5rem;
+    }
+
+    .doc-tab:hover { color: var(--accent); }
+
+    .doc-tab.active { color: var(--accent); }
+
+    .doc-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0.2rem;
+      right: 0.2rem;
+      bottom: -1px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .doc-tab.active .doc-tab-count {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .docs-list { display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .doc-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .doc-row:hover {
+      box-shadow: 0 8px 20px var(--shadow-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+
+    .doc-row-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .doc-row-icon svg { width: 20px; height: 20px; fill: var(--accent); }
+
+    .doc-row-body { flex: 1; min-width: 0; }
+
+    .doc-row-body h4 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .doc-row-body p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .doc-row-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .docs-empty {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: 16px;
+      color: var(--text-muted);
+    }
+
+    .docs-empty svg {
+      width: 40px;
+      height: 40px;
+      fill: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .docs-empty p:first-of-type {
+      font-weight: 600;
+      color: var(--text-soft);
+      margin-bottom: 0.35rem;
+    }
+
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { text-decoration: none; color: var(--text-soft); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    @media (max-width: 640px) {
+      .navbar { flex-direction: column; gap: 0.75rem; }
+      .nav-links { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+      .page-header h1 { font-size: 1.9rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .footer-links { justify-content: center; flex-wrap: wrap; }
+      .subject-detail-header { flex-direction: column; text-align: center; }
+      .subject-detail-header h2, .subject-detail-header p { text-align: center; }
+      .doc-row { flex-wrap: wrap; }
+      .doc-row-meta { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="9eme.html">9ème</a>
+      <a href="ns4.html" class="current">NS4</a>
+      <div class="nav-tools">
+        <a href="auth.html" class="nav-profile" aria-label="Mon compte">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+        <div class="nav-menu-wrapper" id="navMenuWrapper">
+          <button class="nav-menu-btn" id="navMenuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Plus d'options">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="2"/>
+              <circle cx="12" cy="12" r="2"/>
+              <circle cx="12" cy="19" r="2"/>
+            </svg>
+          </button>
+          <div class="nav-menu-dropdown" id="navMenuDropdown">
+            <a href="admin.html">Espace Administrateur</a>
+          </div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ===== Vue : grille des matières ===== -->
+    <div id="subjectsView">
+      <div class="page-header">
+        <span class="section-label">NS4</span>
+        <h1>Choisissez une matière</h1>
+        <p>Leçons, exercices et corrigés classés par matière pour la NS4. De nouvelles matières et ressources sont ajoutées régulièrement.</p>
+      </div>
+
+      <div class="subjects-grid" id="subjectsGrid"></div>
+
+      <div class="subjects-empty" id="subjectsEmpty" style="display:none;">
+        Aucune matière n'a encore été ajoutée pour la NS4. Revenez bientôt !
+      </div>
+    </div>
+
+    <!-- ===== Vue : détail d'une matière ===== -->
+    <div id="subjectDetailView">
+      <button class="back-link" id="backToSubjects" type="button">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Toutes les matières
+      </button>
+
+      <div class="breadcrumb">
+        <a href="ns4.html">NS4</a> <span>/</span> <span id="breadcrumbSubject"></span>
+      </div>
+
+      <div class="subject-detail-header">
+        <div class="subject-detail-icon" id="subjectDetailIcon"></div>
+        <div>
+          <h2 id="subjectDetailName"></h2>
+          <p id="subjectDetailCount"></p>
+        </div>
+      </div>
+
+      <div class="doc-tabs" id="docTabs"></div>
+
+      <div class="docs-list" id="docsList"></div>
+
+      <div class="docs-empty" id="docsEmpty" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        <p>Aucun document dans cette catégorie pour le moment.</p>
+        <p>De nouvelles ressources seront ajoutées prochainement.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div>© 2026 PartageDocs – Tous droits réservés</div>
+    <div class="footer-links">
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Conditions d'utilisation</a>
+      <a href="admin.html">Administration</a>
+    </div>
+  </footer>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé.
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+    const CLASSE_ID = 'ns4';
+
+    const TAB_LABELS = { lecons: 'Leçons', exercices: 'Exercices', corriges: 'Corrigés' };
+
+    let SUBJECTS = [];          // matières chargées depuis l'API
+    let currentSubject = null;
+    let currentDocsByType = { lecons: [], exercices: [], corriges: [] };
+    let currentTab = 'lecons';
+
+    function countDocsPlaceholder() { return 0; } // le nombre réel est chargé à l'ouverture de la matière
+
+    // ----- Chargement des matières depuis l'API -----
+    function loadSubjects() {
+      return fetch(API_BASE_URL + '/classes/' + CLASSE_ID + '/matieres')
+        .then(function(res) { return res.json(); })
+        .then(function(body) {
+          SUBJECTS = body.matieres || [];
+          renderSubjectsGrid();
+
+          // Ouvre directement une matière si l'URL contient une ancre (#mathematiques)
+          if (window.location.hash) {
+            const slugFromHash = window.location.hash.replace('#', '');
+            const match = SUBJECTS.find(function(s) { return s.slug === slugFromHash; });
+            if (match) openSubject(match.id);
+          }
+        })
+        .catch(function() {
+          document.getElementById('subjectsGrid').style.display = 'none';
+          document.getElementById('subjectsEmpty').style.display = 'block';
+          document.getElementById('subjectsEmpty').textContent =
+            'Impossible de contacter le serveur (' + API_BASE_URL + '). Vérifiez que le backend est démarré.';
+        });
+    }
+
+    // ----- Rendu de la grille des matières -----
+    function renderSubjectsGrid() {
+      const grid = document.getElementById('subjectsGrid');
+      const empty = document.getElementById('subjectsEmpty');
+
+      if (SUBJECTS.length === 0) {
+        grid.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      grid.style.display = 'grid';
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+
+      SUBJECTS.forEach(function(subject) {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'subject-card';
+        card.setAttribute('aria-label', 'Voir les ressources de ' + subject.name);
+        card.innerHTML =
+          '<div class="subject-icon">' + subject.icon + '</div>' +
+          '<h3>' + subject.name + '</h3>' +
+          '<div class="subject-count" id="subject-count-' + subject.id + '">…</div>';
+        card.addEventListener('click', function() { openSubject(subject.id); });
+        grid.appendChild(card);
+
+        // Charge le nombre de documents publiés pour cette matière (affiché sur la carte)
+        fetch(API_BASE_URL + '/documents?classe=' + CLASSE_ID + '&matiere=' + subject.id)
+          .then(function(res) { return res.json(); })
+          .then(function(body) {
+            const total = (body.documents || []).length;
+            const el = document.getElementById('subject-count-' + subject.id);
+            if (el) el.textContent = total + ' document' + (total !== 1 ? 's' : '');
+          });
+      });
+    }
+
+    // ----- Ouvrir une matière -----
+    function openSubject(subjectId) {
+      const subject = SUBJECTS.find(function(s) { return String(s.id) === String(subjectId); });
+      if (!subject) return;
+      currentSubject = subject;
+      currentTab = 'lecons';
+
+      document.getElementById('subjectsView').style.display = 'none';
+      document.getElementById('subjectDetailView').style.display = 'block';
+
+      document.getElementById('subjectDetailIcon').textContent = subject.icon;
+      document.getElementById('subjectDetailName').textContent = subject.name;
+      document.getElementById('breadcrumbSubject').textContent = subject.name;
+
+      fetch(API_BASE_URL + '/documents?classe=' + CLASSE_ID + '&matiere=' + subject.id)
+        .then(function(res) { return res.json(); })
+        .then(function(body) {
+          currentDocsByType = { lecons: [], exercices: [], corriges: [] };
+          (body.documents || []).forEach(function(doc) {
+            if (currentDocsByType[doc.type]) currentDocsByType[doc.type].push(doc);
+          });
+
+          const total = (body.documents || []).length;
+          document.getElementById('subjectDetailCount').textContent =
+            total + ' document' + (total !== 1 ? 's' : '') + ' disponible' + (total !== 1 ? 's' : '');
+
+          renderDocTabs();
+          renderDocsList();
+        });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, '', '#' + subject.slug);
+    }
+
+    function closeSubject() {
+      currentSubject = null;
+      document.getElementById('subjectDetailView').style.display = 'none';
+      document.getElementById('subjectsView').style.display = 'block';
+      history.replaceState(null, '', 'ns4.html');
+    }
+
+    // ----- Onglets Leçons / Exercices / Corrigés -----
+    function renderDocTabs() {
+      const tabsContainer = document.getElementById('docTabs');
+      tabsContainer.innerHTML = '';
+
+      Object.keys(TAB_LABELS).forEach(function(tabKey) {
+        const count = currentDocsByType[tabKey] ? currentDocsByType[tabKey].length : 0;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'doc-tab' + (tabKey === currentTab ? ' active' : '');
+        btn.innerHTML = TAB_LABELS[tabKey] + '<span class="doc-tab-count">' + count + '</span>';
+        btn.addEventListener('click', function() {
+          currentTab = tabKey;
+          renderDocTabs();
+          renderDocsList();
+        });
+        tabsContainer.appendChild(btn);
+      });
+    }
+
+    // ----- Liste des documents pour l'onglet actif -----
+    function renderDocsList() {
+      const list = document.getElementById('docsList');
+      const empty = document.getElementById('docsEmpty');
+      const docs = currentDocsByType[currentTab] || [];
+
+      if (docs.length === 0) {
+        list.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      list.style.display = 'flex';
+      empty.style.display = 'none';
+      list.innerHTML = '';
+
+      docs.forEach(function(doc) {
+        const row = document.createElement('a');
+        row.href = 'ns4-document.html?id=' + doc.id;
+        row.className = 'doc-row';
+        row.innerHTML =
+          '<div class="doc-row-icon">' +
+            '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>' +
+          '</div>' +
+          '<div class="doc-row-body">' +
+            '<h4>' + doc.titre + '</h4>' +
+            '<p>' + (doc.description || '') + '</p>' +
+          '</div>' +
+          '<div class="doc-row-meta">' + new Date(doc.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('fr-FR') + '</div>';
+        list.appendChild(row);
+      });
+    }
+
+    // ----- Initialisation -----
+    loadSubjects();
+    document.getElementById('backToSubjects').addEventListener('click', closeSubject);
+
+    // ----- Thème -----
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
+    // ----- Menu discret (trois points) -----
+    (function() {
+      const wrapper = document.getElementById('navMenuWrapper');
+      const btn = document.getElementById('navMenuBtn');
+
+      function closeMenu() {
+        wrapper.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = wrapper.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) closeMenu();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+  </script>
+</body>
+</html>

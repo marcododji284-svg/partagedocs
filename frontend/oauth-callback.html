@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion en cours… – PartageDocs</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+    .box { text-align: center; }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { color: #64748b; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <p>Connexion en cours…</p>
+  </div>
+
+  <script>
+    // Cette page reçoit ?token=...&id=...&name=...&email=...&role=... depuis
+    // le backend (routes /api/auth/google/callback et /api/auth/facebook/callback),
+    // stocke la session exactement comme auth.html le fait pour une connexion
+    // classique, puis redirige vers la bonne page selon le rôle.
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    const ROLE_REDIRECT = { 'membre': 'index.html', 'admin': 'admin.html', 'super-admin': 'super-admin.html' };
+
+    if (token) {
+      const user = {
+        id: params.get('id'),
+        name: params.get('name'),
+        email: params.get('email'),
+        role: params.get('role') || 'membre'
+      };
+      localStorage.setItem('partagedocs-auth', JSON.stringify({ token: token, user: user }));
+      window.location.href = ROLE_REDIRECT[user.role] || 'index.html';
+    } else {
+      document.querySelector('p').textContent = 'Connexion impossible. Retour à la page de connexion…';
+      setTimeout(function() { window.location.href = 'auth.html'; }, 1800);
+    }
+  </script>
+</body>
+</html>

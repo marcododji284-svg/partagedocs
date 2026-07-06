@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Administrateur – PartageDocs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #7c3aed;
+      --accent-soft: #f5f3ff;
+      --accent-soft2: #ede9fe;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #a78bfa;
+      --accent-soft: #201a35;
+      --accent-soft2: #2a2147;
+      --danger: #f87171;
+      --danger-soft: #2a1516;
+      --success: #4ade80;
+      --success-soft: #0f2115;
+      --warning: #fbbf24;
+      --warning-soft: #2a2010;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre supérieure ----- */
+    .admin-topbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg { width: 24px; height: 24px; fill: var(--accent); }
+
+    .admin-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      margin-left: 0.3rem;
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 0.5rem; }
+
+    .topbar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: var(--text-soft);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      transition: background 0.2s ease, color 0.2s ease;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .topbar-link:hover { background: var(--accent-soft); color: var(--accent); }
+    .topbar-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); transform: rotate(15deg); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 19px; height: 19px; fill: var(--accent); }
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Mise en page ----- */
+    .admin-layout { display: flex; min-height: calc(100vh - 61px); }
+
+    /* ----- Barre latérale ----- */
+    .admin-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: var(--bg-alt);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .sidebar-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1.75rem; }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .sidebar-item svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+    .sidebar-item:hover { background: var(--accent-soft); color: var(--accent); }
+
+    .sidebar-item.active {
+      background: var(--accent-soft2);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .sidebar-item .count-tag {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.05rem 0.45rem;
+      border-radius: 999px;
+    }
+
+    .sidebar-item.active .count-tag { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ----- Contenu principal ----- */
+    .admin-main { flex: 1; padding: 2rem; max-width: 1200px; }
+    .admin-view { display: none; }
+    .admin-view.active { display: block; }
+
+    .view-header {
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .view-header h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .view-header p { color: var(--text-muted); font-size: 0.92rem; max-width: 560px; }
+
+    /* ----- Stats (tableau de bord) ----- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .stat-card .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .stat-card .stat-icon svg { width: 20px; height: 20px; fill: var(--accent); }
+    .stat-card .stat-value { font-family: 'Source Serif 4', serif; font-size: 1.8rem; font-weight: 600; color: var(--text); }
+    .stat-card .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .dashboard-section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+    }
+
+    /* ----- Boutons ----- */
+    .btn-primary {
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.2rem;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .btn-primary svg { width: 15px; height: 15px; fill: currentColor; }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .btn-secondary {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    /* ----- Cartes / tableaux génériques ----- */
+    .panel {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h3 { font-size: 1.02rem; font-weight: 600; }
+    .panel-header .field-hint { font-size: 0.8rem; color: var(--text-muted); }
+
+    table.data-table { width: 100%; border-collapse: collapse; }
+
+    .data-table th {
+      text-align: left;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.8rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .data-table td {
+      padding: 0.8rem 1.1rem;
+      font-size: 0.87rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .mono { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.83rem; letter-spacing: 0.02em; }
+
+    .badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; }
+    .badge-role-membre { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .badge-role-admin { background: var(--accent-soft); color: var(--accent); }
+    .badge-role-super-admin { background: var(--accent); color: #fff; }
+
+    .badge-status-disponible { background: var(--success-soft); color: var(--success); }
+    .badge-status-utilise { background: var(--warning-soft); color: var(--warning); }
+    .badge-status-revoque { background: var(--danger-soft); color: var(--danger); }
+
+    .badge-status-en_attente { background: var(--warning-soft); color: var(--warning); }
+    .badge-status-approuvee { background: var(--success-soft); color: var(--success); }
+    .badge-status-rejetee { background: var(--danger-soft); color: var(--danger); }
+
+    .row-actions { display: flex; gap: 0.4rem; }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .icon-btn svg { width: 14px; height: 14px; fill: var(--text-muted); }
+    .icon-btn:hover { border-color: var(--border-strong); background: var(--bg); }
+    .icon-btn.danger:hover { border-color: var(--danger); }
+    .icon-btn.danger:hover svg { fill: var(--danger); }
+
+    .table-empty { text-align: center; padding: 2.5rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; }
+
+    /* ----- Gestion des classes / matières ----- */
+    .classes-columns {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.5rem;
+    }
+
+    .class-list { display: flex; flex-direction: column; gap: 0.4rem; padding: 1rem; }
+
+    .class-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.65rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .class-item:hover { border-color: var(--border-strong); }
+    .class-item.active { background: var(--accent-soft2); border-color: var(--accent); color: var(--accent); }
+    .class-item .class-count { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+    .class-item.active .class-count { color: var(--accent); }
+
+    .add-class-row {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.25rem 1rem 1rem;
+    }
+
+    .add-class-row input {
+      flex: 1;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+    }
+
+    .add-class-row input:focus { outline: none; border-color: var(--accent); }
+
+    .matieres-panel-body { padding: 1.25rem; }
+
+    .matiere-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.6rem;
+    }
+
+    .matiere-row .matiere-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .matiere-row .matiere-name { flex: 1; font-weight: 600; font-size: 0.9rem; }
+
+    .add-matiere-form {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .add-matiere-form input {
+      font-family: inherit;
+      font-size: 0.87rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .add-matiere-form input:focus { outline: none; border-color: var(--accent); }
+    .add-matiere-form input#newMatiereIcon { width: 70px; text-align: center; }
+    .add-matiere-form input#newMatiereName { flex: 1; min-width: 160px; }
+
+    .empty-hint {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.87rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: 10px;
+    }
+
+    /* ----- Modale message de candidature approuvée ----- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 100;
+    }
+
+    .modal-overlay.visible { display: flex; }
+
+    .modal-card {
+      background: var(--bg-alt);
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      padding: 1.75rem;
+      box-shadow: 0 20px 50px var(--shadow-hover);
+      border: 1px solid var(--border);
+    }
+
+    .modal-card h3 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .modal-card .field-hint { margin-bottom: 1rem; }
+
+    .message-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      white-space: pre-wrap;
+      margin-bottom: 1.25rem;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    @media (max-width: 900px) {
+      .admin-layout { flex-direction: column; }
+      .admin-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+      }
+      .sidebar-nav { flex-direction: row; margin-bottom: 0; }
+      .sidebar-section-label { display: none; }
+      .admin-main { padding: 1.25rem; }
+      .classes-columns { grid-template-columns: 1fr; }
+      .data-table-wrapper { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre supérieure -->
+  <div class="admin-topbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs <span class="admin-badge">Super Admin</span>
+    </a>
+    <div class="topbar-right">
+      <a href="admin.html" class="topbar-link">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Espace Admin
+      </a>
+      <a href="index.html" class="topbar-link">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Retour au site
+      </a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+        <svg class="icon-sun" viewBox="0 0 24 24">
+          <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24">
+          <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+        </svg>
+      </button>
+      <button class="topbar-link" id="logoutBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L17.17 10H8v2h9.17l-1.58 1.59L17 15l4-4zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Barre latérale -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section-label">Vue d'ensemble</div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-view="dashboard" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Tableau de bord
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label">Structure du site</div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-item" data-view="matieres" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/></svg>
+          Classes &amp; matières
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label">Accès</div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-item" data-view="codes" type="button">
+          <svg viewBox="0 0 24 24"><path d="M7 14a5 5 0 100-10 5 5 0 000 10zm0-8a3 3 0 110 6 3 3 0 010-6zm6.9 2H21v2h-2v2h-2v-2h-2.1a5.98 5.98 0 01-1.06 1.94L17 16.06 15.59 17.5l-2.35-2.35A6.97 6.97 0 017 16a7 7 0 110-14c3.14 0 5.77 2.11 6.6 5H14z"/></svg>
+          Codes d'accès
+          <span class="count-tag" id="codesCount">0</span>
+        </button>
+        <button class="sidebar-item" data-view="candidatures" type="button">
+          <svg viewBox="0 0 24 24"><path d="M20 6h-4V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2zM10 4h4v2h-4V4z"/></svg>
+          Candidatures
+          <span class="count-tag" id="candidaturesCount">0</span>
+        </button>
+        <button class="sidebar-item" data-view="comptes" type="button">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Comptes
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="admin-main">
+      <!-- ===== Tableau de bord ===== -->
+      <div class="admin-view active" id="view-dashboard">
+        <div class="view-header">
+          <div>
+            <h1>Tableau de bord</h1>
+            <p>Vue d'ensemble de la structure, des accès et des candidatures de PartageDocs.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/></svg></div>
+            <div class="stat-value" id="statClasses">0</div>
+            <div class="stat-label">Classes actives</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+            <div class="stat-value" id="statMatieres">0</div>
+            <div class="stat-label">Matières au total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M7 14a5 5 0 100-10 5 5 0 000 10z"/></svg></div>
+            <div class="stat-value" id="statCodesDispo">0</div>
+            <div class="stat-label">Codes disponibles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H4a2 2 0 00-2 2v11a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z"/></svg></div>
+            <div class="stat-value" id="statCandidaturesAttente">0</div>
+            <div class="stat-label">Candidatures en attente</div>
+          </div>
+        </div>
+
+        <div class="dashboard-section-title">Candidatures récentes</div>
+        <div class="panel">
+          <div class="data-table-wrapper">
+            <table class="data-table" id="dashboardCandidaturesTable">
+              <thead>
+                <tr><th>Nom</th><th>Classe(s)</th><th>Date</th><th>Statut</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Classes & matières ===== -->
+      <div class="admin-view" id="view-matieres">
+        <div class="view-header">
+          <div>
+            <h1>Classes &amp; matières</h1>
+            <p>Ajoutez une nouvelle classe (cadre) ou une nouvelle matière. Ces éléments apparaissent automatiquement dans 9eme.html / ns4.html et dans le formulaire d'ajout de contenu de l'espace Admin.</p>
+          </div>
+        </div>
+
+        <div class="classes-columns">
+          <div class="panel">
+            <div class="panel-header"><h3>Classes</h3></div>
+            <div class="class-list" id="classList"></div>
+            <div class="add-class-row">
+              <input type="text" id="newClasseName" placeholder="Nouvelle classe (ex : Terminale)">
+              <button class="btn-primary" id="addClasseBtn" type="button">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Ajouter
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3 id="matieresPanelTitle">Matières</h3>
+              <span class="field-hint" id="matieresPanelHint"></span>
+            </div>
+            <div class="matieres-panel-body">
+              <div id="matieresListContainer"></div>
+              <div class="add-matiere-form">
+                <input type="text" id="newMatiereIcon" placeholder="🧪" maxlength="2">
+                <input type="text" id="newMatiereName" placeholder="Nom de la nouvelle matière">
+                <button class="btn-primary" id="addMatiereBtn" type="button">
+                  <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                  Ajouter la matière
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Codes d'accès ===== -->
+      <div class="admin-view" id="view-codes">
+        <div class="view-header">
+          <div>
+            <h1>Codes d'accès</h1>
+            <p>Générez des codes Admin ou Super Admin. Un code n'est utilisable que par un seul compte ; une fois utilisé, il reste lié à ce compte jusqu'à révocation.</p>
+          </div>
+          <button class="btn-primary" id="generateCodeBtn" type="button">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Générer un code
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Code</th><th>Rôle</th><th>Statut</th><th>Compte lié</th><th></th></tr>
+              </thead>
+              <tbody id="codesTableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-empty" id="codesEmpty" style="display:none;">Aucun code généré pour le moment.</div>
+        </div>
+      </div>
+
+      <!-- ===== Candidatures ===== -->
+      <div class="admin-view" id="view-candidatures">
+        <div class="view-header">
+          <div>
+            <h1>Candidatures enseignants</h1>
+            <p>Reçues depuis candidature.html. Approuver une candidature génère un code Admin et prépare le message à envoyer.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Nom</th><th>E-mail</th><th>Classe(s)</th><th>Matière(s)</th><th>Date</th><th>Statut</th><th></th></tr>
+              </thead>
+              <tbody id="candidaturesTableBody"></tbody>
+            </table>
+          </div>
+          <div class="table-empty" id="candidaturesEmpty" style="display:none;">Aucune candidature reçue pour le moment.</div>
+        </div>
+      </div>
+
+      <!-- ===== Comptes ===== -->
+      <div class="admin-view" id="view-comptes">
+        <div class="view-header">
+          <div>
+            <h1>Comptes</h1>
+            <p>Liste des comptes et de leur statut. Le statut dépend du code utilisé à l'inscription.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Code lié</th><th></th></tr>
+              </thead>
+              <tbody id="comptesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modale : message d'approbation prêt à envoyer -->
+  <div class="modal-overlay" id="approveModal">
+    <div class="modal-card">
+      <h3>Candidature approuvée</h3>
+      <p class="field-hint">Copiez ce message et envoyez-le au candidat par e-mail.</p>
+      <div class="message-box" id="approveMessageBox"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="closeApproveModal" type="button">Fermer</button>
+        <button class="btn-primary" id="copyApproveMessage" type="button">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
+          Copier le message
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé.
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+
+    /* ----- Garde d'accès : Super Admin uniquement ----- */
+    const authRaw = localStorage.getItem('partagedocs-auth');
+    const auth = authRaw ? JSON.parse(authRaw) : null;
+
+    if (!auth || auth.user.role !== 'super-admin') {
+      window.location.href = 'auth.html';
+    }
+
+    function authHeaders() {
+      return { 'Authorization': 'Bearer ' + auth.token };
+    }
+
+    async function fetchJSON(url, options) {
+      options = options || {};
+      const res = await fetch(url, options);
+      if (res.status === 401) {
+        localStorage.removeItem('partagedocs-auth');
+        window.location.href = 'auth.html';
+        throw new Error('Session expirée.');
+      }
+      const body = await res.json().catch(function() { return {}; });
+      if (!res.ok) throw new Error(body.error || 'Erreur inattendue.');
+      return body;
+    }
+
+    /* =========================================================================
+       DONNÉES — chargées depuis l'API et mises en cache ici pour l'affichage.
+       Chaque action (ajout/suppression/révocation/approbation) recharge les
+       données concernées avant de redessiner la vue.
+       ========================================================================= */
+    let CLASSES = [];
+    let MATIERES = {};
+    let CODES = [];
+    let CANDIDATURES = [];
+    let COMPTES = [];
+
+    const CLASSE_LABELS = function(id) {
+      const c = CLASSES.find(function(x) { return x.id === id; });
+      return c ? c.name : id;
+    };
+
+    const ROLE_LABELS = { 'membre': 'Membre', 'admin': 'Administrateur', 'super-admin': 'Super Admin' };
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      try {
+        return new Date(iso.replace(' ', 'T') + 'Z').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch (e) {
+        return iso;
+      }
+    }
+
+    function statutLabel(statut) {
+      return { en_attente: 'En attente', approuvee: 'Approuvée', rejetee: 'Rejetée' }[statut] || statut;
+    }
+
+    /* ----- Chargement des données depuis l'API ----- */
+    async function loadClasses() {
+      const body = await fetchJSON(API_BASE_URL + '/classes');
+      CLASSES = body.classes;
+    }
+
+    async function loadAllMatieres() {
+      const next = {};
+      for (const c of CLASSES) {
+        const body = await fetchJSON(API_BASE_URL + '/classes/' + c.id + '/matieres');
+        next[c.id] = body.matieres;
+      }
+      MATIERES = next;
+    }
+
+    async function loadCodes() {
+      const body = await fetchJSON(API_BASE_URL + '/codes', { headers: authHeaders() });
+      CODES = body.codes;
+    }
+
+    async function loadCandidatures() {
+      const body = await fetchJSON(API_BASE_URL + '/candidatures', { headers: authHeaders() });
+      CANDIDATURES = body.candidatures;
+    }
+
+    async function loadComptes() {
+      const body = await fetchJSON(API_BASE_URL + '/users', { headers: authHeaders() });
+      COMPTES = body.users;
+    }
+
+    function updateSidebarCounts() {
+      document.getElementById('codesCount').textContent = CODES.filter(function(c) { return c.status === 'disponible'; }).length;
+      document.getElementById('candidaturesCount').textContent = CANDIDATURES.filter(function(c) { return c.statut === 'en_attente'; }).length;
+    }
+
+    /* ----- Navigation entre vues ----- */
+    const sidebarItems = document.querySelectorAll('.sidebar-item[data-view]');
+    const views = document.querySelectorAll('.admin-view');
+
+    async function showView(viewId) {
+      sidebarItems.forEach(function(item) { item.classList.toggle('active', item.dataset.view === viewId); });
+      views.forEach(function(v) { v.classList.toggle('active', v.id === 'view-' + viewId); });
+
+      try {
+        if (viewId === 'dashboard') {
+          await loadClasses(); await loadAllMatieres(); await loadCodes(); await loadCandidatures();
+          renderDashboard();
+        }
+        if (viewId === 'matieres') {
+          await loadClasses(); await loadAllMatieres();
+          if (!selectedClasseId && CLASSES.length > 0) selectedClasseId = CLASSES[0].id;
+          renderClasses();
+        }
+        if (viewId === 'codes') { await loadCodes(); renderCodesTable(); }
+        if (viewId === 'candidatures') { await loadCandidatures(); renderCandidaturesTable(); }
+        if (viewId === 'comptes') { await loadComptes(); renderComptesTable(); }
+        updateSidebarCounts();
+      } catch (err) {
+        alert(err.message || 'Impossible de contacter le serveur (' + API_BASE_URL + ').');
+      }
+    }
+
+    sidebarItems.forEach(function(item) {
+      item.addEventListener('click', function() { showView(item.dataset.view); });
+    });
+
+    /* ----- Tableau de bord ----- */
+    function renderDashboard() {
+      const totalMatieres = Object.values(MATIERES).reduce(function(sum, arr) { return sum + arr.length; }, 0);
+      const codesDispo = CODES.filter(function(c) { return c.status === 'disponible'; }).length;
+      const candidaturesAttente = CANDIDATURES.filter(function(c) { return c.statut === 'en_attente'; }).length;
+
+      document.getElementById('statClasses').textContent = CLASSES.length;
+      document.getElementById('statMatieres').textContent = totalMatieres;
+      document.getElementById('statCodesDispo').textContent = codesDispo;
+      document.getElementById('statCandidaturesAttente').textContent = candidaturesAttente;
+
+      const tbody = document.querySelector('#dashboardCandidaturesTable tbody');
+      tbody.innerHTML = '';
+      CANDIDATURES.slice(0, 5).forEach(function(c) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + c.nom + '</td>' +
+          '<td>' + c.classes.map(CLASSE_LABELS).join(', ') + '</td>' +
+          '<td>' + formatDate(c.created_at) + '</td>' +
+          '<td><span class="badge badge-status-' + c.statut + '">' + statutLabel(c.statut) + '</span></td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* ----- Classes & matières ----- */
+    let selectedClasseId = null;
+
+    function renderClasses() {
+      const list = document.getElementById('classList');
+      list.innerHTML = '';
+      CLASSES.forEach(function(classe) {
+        const count = (MATIERES[classe.id] || []).length;
+        const div = document.createElement('div');
+        div.className = 'class-item' + (classe.id === selectedClasseId ? ' active' : '');
+        div.innerHTML = '<span>' + classe.name + '</span><span class="class-count">' + count + ' matière' + (count !== 1 ? 's' : '') + '</span>';
+        div.addEventListener('click', function() {
+          selectedClasseId = classe.id;
+          renderClasses();
+        });
+        list.appendChild(div);
+      });
+      renderMatieres();
+    }
+
+    document.getElementById('addClasseBtn').addEventListener('click', async function() {
+      const input = document.getElementById('newClasseName');
+      const name = input.value.trim();
+      if (!name) return;
+      try {
+        const body = await fetchJSON(API_BASE_URL + '/classes', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+          body: JSON.stringify({ name: name })
+        });
+        input.value = '';
+        selectedClasseId = body.classe.id;
+        await loadClasses();
+        await loadAllMatieres();
+        renderClasses();
+        updateSidebarCounts();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    function renderMatieres() {
+      const title = document.getElementById('matieresPanelTitle');
+      const hint = document.getElementById('matieresPanelHint');
+      const container = document.getElementById('matieresListContainer');
+      const classe = CLASSES.find(function(c) { return c.id === selectedClasseId; });
+
+      title.textContent = 'Matières – ' + (classe ? classe.name : '');
+      hint.textContent = classe ? ('Visibles dans ' + classe.id + '.html') : '';
+
+      const matieres = MATIERES[selectedClasseId] || [];
+      container.innerHTML = '';
+
+      if (matieres.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-hint';
+        empty.textContent = 'Aucune matière pour cette classe. Ajoutez-en une ci-dessous.';
+        container.appendChild(empty);
+        return;
+      }
+
+      matieres.forEach(function(m) {
+        const row = document.createElement('div');
+        row.className = 'matiere-row';
+        row.innerHTML =
+          '<div class="matiere-icon">' + m.icon + '</div>' +
+          '<div class="matiere-name">' + m.name + '</div>' +
+          '<button class="icon-btn danger" title="Supprimer la matière" type="button">' +
+            '<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+          '</button>';
+        row.querySelector('button').addEventListener('click', async function() {
+          if (!confirm('Supprimer "' + m.name + '" de ' + (classe ? classe.name : '') + ' ?\nLes documents déjà publiés dans cette matière ne seront plus accessibles depuis le site.')) return;
+          try {
+            await fetchJSON(API_BASE_URL + '/matieres/' + m.id, { method: 'DELETE', headers: authHeaders() });
+            await loadAllMatieres();
+            renderClasses();
+            updateSidebarCounts();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+        container.appendChild(row);
+      });
+    }
+
+    document.getElementById('addMatiereBtn').addEventListener('click', async function() {
+      const iconInput = document.getElementById('newMatiereIcon');
+      const nameInput = document.getElementById('newMatiereName');
+      const icon = iconInput.value.trim() || '📘';
+      const name = nameInput.value.trim();
+      if (!name) { nameInput.focus(); return; }
+      if (!selectedClasseId) { alert('Choisissez une classe.'); return; }
+
+      try {
+        await fetchJSON(API_BASE_URL + '/classes/' + selectedClasseId + '/matieres', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+          body: JSON.stringify({ name: name, icon: icon })
+        });
+        iconInput.value = '';
+        nameInput.value = '';
+        await loadAllMatieres();
+        renderClasses();
+        updateSidebarCounts();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    /* ----- Codes d'accès ----- */
+    document.getElementById('generateCodeBtn').addEventListener('click', async function() {
+      const role = confirm('OK = générer un code Super Admin\nAnnuler = générer un code Admin') ? 'super-admin' : 'admin';
+      try {
+        await fetchJSON(API_BASE_URL + '/codes', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+          body: JSON.stringify({ role: role })
+        });
+        await loadCodes();
+        renderCodesTable();
+        updateSidebarCounts();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    function renderCodesTable() {
+      const tbody = document.getElementById('codesTableBody');
+      const empty = document.getElementById('codesEmpty');
+      tbody.innerHTML = '';
+
+      if (CODES.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      CODES.forEach(function(c) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="mono">' + c.code + '</td>' +
+          '<td><span class="badge badge-role-' + c.role + '">' + ROLE_LABELS[c.role] + '</span></td>' +
+          '<td><span class="badge badge-status-' + c.status + '">' + (c.status === 'disponible' ? 'Disponible' : c.status === 'utilise' ? 'Utilisé' : 'Révoqué') + '</span></td>' +
+          '<td>' + (c.account_email || '—') + '</td>' +
+          '<td>' +
+            '<div class="row-actions">' +
+              (c.status === 'utilise'
+                ? '<button class="icon-btn danger" data-revoke="' + c.code + '" title="Révoquer ce code (déconnecte le compte lié)" type="button"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg></button>'
+                : '<button class="icon-btn danger" data-delete="' + c.code + '" title="Supprimer le code" type="button"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>') +
+            '</div>' +
+          '</td>';
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll('[data-revoke]').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          const code = btn.getAttribute('data-revoke');
+          if (!confirm('Révoquer ' + code + ' ? Le compte lié perdra son statut associé.')) return;
+          try {
+            await fetchJSON(API_BASE_URL + '/codes/' + code + '/revoke', { method: 'POST', headers: authHeaders() });
+            await loadCodes();
+            await loadComptes();
+            renderCodesTable();
+            updateSidebarCounts();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+
+      tbody.querySelectorAll('[data-delete]').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          const code = btn.getAttribute('data-delete');
+          try {
+            await fetchJSON(API_BASE_URL + '/codes/' + code, { method: 'DELETE', headers: authHeaders() });
+            await loadCodes();
+            renderCodesTable();
+            updateSidebarCounts();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    /* ----- Candidatures ----- */
+    function renderCandidaturesTable() {
+      const tbody = document.getElementById('candidaturesTableBody');
+      const empty = document.getElementById('candidaturesEmpty');
+      tbody.innerHTML = '';
+
+      if (CANDIDATURES.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      CANDIDATURES.forEach(function(c) {
+        const tr = document.createElement('tr');
+        const actionCell = c.statut === 'en_attente'
+          ? '<div class="row-actions">' +
+              '<button class="icon-btn" data-approve="' + c.id + '" title="Approuver" type="button"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></button>' +
+              '<button class="icon-btn danger" data-reject="' + c.id + '" title="Rejeter" type="button"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg></button>' +
+              '<a class="icon-btn" href="' + API_BASE_URL + '/candidatures/' + c.id + '/cv" title="Voir le CV" target="_blank"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></a>' +
+            '</div>'
+          : '<a class="icon-btn" href="' + API_BASE_URL + '/candidatures/' + c.id + '/cv" title="Voir le CV" target="_blank"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></a>';
+
+        tr.innerHTML =
+          '<td>' + c.nom + '</td>' +
+          '<td>' + c.email + '</td>' +
+          '<td>' + c.classes.map(CLASSE_LABELS).join(', ') + '</td>' +
+          '<td>' + c.matieres.join(', ') + '</td>' +
+          '<td>' + formatDate(c.created_at) + '</td>' +
+          '<td><span class="badge badge-status-' + c.statut + '">' + statutLabel(c.statut) + '</span></td>' +
+          '<td>' + actionCell + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll('[data-approve]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          approveCandidature(Number(btn.getAttribute('data-approve')));
+        });
+      });
+
+      tbody.querySelectorAll('[data-reject]').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          const id = Number(btn.getAttribute('data-reject'));
+          const c = CANDIDATURES.find(function(x) { return x.id === id; });
+          if (!c || !confirm('Rejeter la candidature de ' + c.nom + ' ?')) return;
+          try {
+            await fetchJSON(API_BASE_URL + '/candidatures/' + id + '/reject', { method: 'POST', headers: authHeaders() });
+            await loadCandidatures();
+            renderCandidaturesTable();
+            updateSidebarCounts();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    async function approveCandidature(id) {
+      try {
+        const body = await fetchJSON(API_BASE_URL + '/candidatures/' + id + '/approve', { method: 'POST', headers: authHeaders() });
+
+        document.getElementById('approveMessageBox').textContent = body.message;
+        document.getElementById('approveModal').classList.add('visible');
+
+        await loadCandidatures();
+        await loadCodes();
+        renderCandidaturesTable();
+        updateSidebarCounts();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    document.getElementById('closeApproveModal').addEventListener('click', function() {
+      document.getElementById('approveModal').classList.remove('visible');
+    });
+
+    document.getElementById('copyApproveMessage').addEventListener('click', function() {
+      const text = document.getElementById('approveMessageBox').textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        alert('Message copié dans le presse-papiers.');
+      }).catch(function() {
+        alert('Impossible de copier automatiquement. Sélectionnez le texte manuellement.');
+      });
+    });
+
+    /* ----- Comptes ----- */
+    function renderComptesTable() {
+      const tbody = document.getElementById('comptesTableBody');
+      tbody.innerHTML = '';
+      COMPTES.forEach(function(acc) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + acc.name + '</td>' +
+          '<td>' + acc.email + '</td>' +
+          '<td><span class="badge badge-role-' + acc.role + '">' + ROLE_LABELS[acc.role] + '</span></td>' +
+          '<td>' + (acc.code_used ? '<span class="mono">' + acc.code_used + '</span>' : '—') + '</td>' +
+          '<td>' + (acc.role !== 'membre'
+            ? '<button class="icon-btn danger" data-demote="' + acc.id + '" title="Rétrograder en membre" type="button"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg></button>'
+            : '') +
+          '</td>';
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll('[data-demote]').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          const id = btn.getAttribute('data-demote');
+          const acc = COMPTES.find(function(a) { return String(a.id) === id; });
+          if (!acc || !confirm('Rétrograder ' + acc.name + ' au statut Membre ?')) return;
+          try {
+            await fetchJSON(API_BASE_URL + '/users/' + id + '/demote', { method: 'POST', headers: authHeaders() });
+            await loadComptes();
+            await loadCodes();
+            renderComptesTable();
+            updateSidebarCounts();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
+      });
+    }
+
+    /* ----- Déconnexion ----- */
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      if (confirm('Se déconnecter de l\'espace Super Administrateur ?')) {
+        localStorage.removeItem('partagedocs-auth');
+        window.location.href = 'auth.html';
+      }
+    });
+
+    /* ----- Thème ----- */
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
+    /* ----- Initialisation ----- */
+    showView('dashboard');
+  </script>
+</body>
+</html>

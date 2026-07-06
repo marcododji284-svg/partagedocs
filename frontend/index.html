@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PartageDocs – Ressources pédagogiques pour la 9ème et la NS4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #475569;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-soft2: #dbeafe;
+      --accent-soft3: #bfdbfe;
+      --shadow: rgba(15, 23, 42, 0.06);
+      --shadow-hover: rgba(15, 23, 42, 0.12);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #111827;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --border: #1f2a3d;
+      --border-strong: #2d3b52;
+      --accent: #60a5fa;
+      --accent-soft: #16213a;
+      --accent-soft2: #16213a;
+      --accent-soft3: #1c2942;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --shadow-hover: rgba(0, 0, 0, 0.5);
+      color-scheme: dark;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ----- Barre de navigation ----- */
+    .navbar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--accent);
+      transition: fill 0.35s ease;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+
+    .nav-links > a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links > a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* ----- Groupe compte / outils : cluster distinct, ancré dans le coin ----- */
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-left: 0.5rem;
+      padding: 0.3rem;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    /* ----- Icône profil (page auth.html à venir) ----- */
+    .nav-profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .nav-profile:hover {
+      background: var(--accent-soft);
+      transform: scale(1.05);
+    }
+
+    .nav-profile svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--text-muted);
+      transition: fill 0.2s ease;
+    }
+
+    .nav-profile:hover svg {
+      fill: var(--accent);
+    }
+
+    /* ----- Menu discret (trois points) ----- */
+    .nav-menu-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .nav-menu-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-menu-btn:hover,
+    .nav-menu-wrapper.open .nav-menu-btn {
+      background: var(--accent-soft);
+    }
+
+    .nav-menu-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+      transition: fill 0.2s ease;
+    }
+
+    .nav-menu-btn:hover svg,
+    .nav-menu-wrapper.open .nav-menu-btn svg {
+      fill: var(--accent);
+    }
+
+    .nav-menu-dropdown {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      min-width: 190px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 12px 28px var(--shadow-hover);
+      padding: 0.4rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      z-index: 60;
+    }
+
+    .nav-menu-wrapper.open .nav-menu-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .nav-menu-dropdown a {
+      display: block;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-menu-dropdown a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* ----- Bouton mode nuit/jour ----- */
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.35s;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      transform: rotate(15deg);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent);
+      transition: fill 0.35s ease;
+    }
+
+    .theme-toggle .icon-moon { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+    /* ----- Section principale ----- */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4.5rem 2rem 2rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      transition: background 0.35s ease;
+    }
+
+    .hero {
+      max-width: 700px;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .hero-illustration {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-illustration svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-illustration rect { transition: fill 0.35s ease; }
+    .hero-illustration line { transition: stroke 0.35s ease; }
+
+    /* ----- Cartes de classe ----- */
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .classes-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .classe-card {
+      background: var(--bg-alt);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      flex: 1 1 280px;
+      max-width: 320px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s, background 0.35s;
+      box-shadow: 0 4px 12px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .classe-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .classe-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .classe-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px var(--shadow-hover);
+      border-color: var(--border-strong);
+    }
+
+    .classe-icon {
+      background: var(--accent-soft);
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.35s ease, transform 0.25s ease;
+    }
+
+    .classe-card:hover .classe-icon {
+      transform: scale(1.08);
+    }
+
+    .classe-icon svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--accent);
+      transition: fill 0.35s ease;
+    }
+
+    .classe-card h2 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .classe-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .classe-card .arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .classe-card:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ----- Compteur ----- */
+    .counter-banner {
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 2rem;
+      margin: 0 auto 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text);
+      max-width: 450px;
+      width: 100%;
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .counter-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* ----- Derniers documents ----- */
+    .latest-docs {
+      text-align: center;
+      margin-bottom: 4rem;
+      width: 100%;
+    }
+
+    .docs-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .doc-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      flex: 1 1 250px;
+      max-width: 280px;
+      text-decoration: none;
+      color: var(--text);
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+      text-align: left;
+    }
+
+    .doc-card:hover {
+      box-shadow: 0 8px 20px var(--shadow-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-3px);
+    }
+
+    .doc-badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .doc-card h4 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .doc-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .doc-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ----- Appel à contribution ----- */
+    .cta-contribute {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 4rem;
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .cta-contribute h2 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 600;
+      font-size: 1.7rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-contribute p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* ----- Pourquoi nous ? (FAQ accordéon) ----- */
+    .why-us {
+      max-width: 700px;
+      margin: 0 auto 4rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    .why-us h2 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2rem;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.35s ease;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0.25rem;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .faq-question:hover {
+      color: var(--accent);
+    }
+
+    .faq-icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.35s ease, transform 0.3s ease;
+    }
+
+    .faq-icon::before,
+    .faq-icon::after {
+      content: "";
+      position: absolute;
+      background: var(--accent);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .faq-icon::before {
+      width: 12px;
+      height: 2px;
+    }
+
+    .faq-icon::after {
+      width: 2px;
+      height: 12px;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-item.open .faq-icon::after {
+      opacity: 0;
+    }
+
+    .faq-answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+
+    .faq-item.open .faq-answer {
+      grid-template-rows: 1fr;
+    }
+
+    .faq-answer-inner {
+      overflow: hidden;
+    }
+
+    .faq-answer p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 0 0.25rem 1.25rem;
+    }
+
+    /* ----- Footer ----- */
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--text-soft);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .navbar {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .nav-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .nav-tools {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .counter-banner {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5v14.5c1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5z"/>
+      </svg>
+      PartageDocs
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="9eme.html">9ème</a>
+      <a href="ns4.html">NS4</a>
+
+      <!-- Groupe compte / outils : regroupé et séparé, en bout de rangée -->
+      <div class="nav-tools">
+        <a href="auth.html" class="nav-profile" aria-label="Mon compte">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z"/>
+          </svg>
+        </a>
+        <div class="nav-menu-wrapper" id="navMenuWrapper">
+          <button class="nav-menu-btn" id="navMenuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Plus d'options">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="5" r="2"/>
+              <circle cx="12" cy="12" r="2"/>
+              <circle cx="12" cy="19" r="2"/>
+            </svg>
+          </button>
+          <div class="nav-menu-dropdown" id="navMenuDropdown">
+            <a href="admin.html">Espace Administrateur</a>
+          </div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Activer le mode nuit" type="button">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM4.22 4.22a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42L4.22 5.64a1 1 0 010-1.42zm12.72 12.72a1 1 0 011.42 0l1.42 1.42a1 1 0 11-1.42 1.42l-1.42-1.42a1 1 0 010-1.42zM2 12a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm18 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM4.22 19.78a1 1 0 010-1.42l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zM16.94 4.22a1 1 0 010 1.42l-1.42 1.42a1 1 0 11-1.42-1.42l1.42-1.42a1 1 0 011.42 0z"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.9 8-9.8.4-.1.8.1 1 .5.2.4.1.8-.2 1.1-1.7 1.6-2.7 3.9-2.7 6.3 0 4.7 3.8 8.6 8.6 8.6.5 0 1 0 1.5-.1.4-.1.8.1.9.5.2.4 0 .8-.3 1.1-1.9 1.2-4.1 1.8-6.8 1.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main>
+    <div class="hero">
+      <span class="eyebrow">Accès gratuit · Sans inscription requise</span>
+      <div class="hero-illustration">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="40" width="100" height="130" rx="8" fill="var(--accent-soft2)" />
+          <rect x="150" y="20" width="100" height="150" rx="8" fill="var(--accent-soft3)" />
+          <rect x="270" y="50" width="100" height="120" rx="8" fill="var(--accent-soft2)" />
+          <line x1="50" y1="70" x2="110" y2="70" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="50" y1="90" x2="90" y2="90" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="170" y1="50" x2="230" y2="50" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="170" y1="70" x2="210" y2="70" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="290" y1="80" x2="350" y2="80" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="290" y1="100" x2="330" y2="100" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>Des ressources pédagogiques fiables au service de votre réussite</h1>
+      <p>PartageDocs met à votre disposition des leçons, exercices et corrigés soigneusement élaborés par des enseignants qualifiés, à destination des élèves de 9ème et de NS4.</p>
+    </div>
+
+    <!-- Choix de la classe -->
+    <div class="classes-container">
+      <a href="9eme.html" class="classe-card">
+        <div class="classe-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+          </svg>
+        </div>
+        <h2>9ème Année</h2>
+        <p>Mathématiques, Français, Sciences, Histoire-Géographie…</p>
+        <span class="arrow">Consulter les ressources →</span>
+      </a>
+
+      <a href="ns4.html" class="classe-card">
+        <div class="classe-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L0 9l12 7 10-5.83V17h2V9L12 2zm0 2.18L18.82 9 12 12.72 5.18 9 12 4.18zM5 14v2.18L12 21l7-4.82V14l-7 4-7-4z"/>
+          </svg>
+        </div>
+        <h2>NS4</h2>
+        <p>Mathématiques, Physique, Chimie, Philosophie…</p>
+        <span class="arrow">Consulter les ressources →</span>
+      </a>
+    </div>
+
+    <!-- Compteur de ressources -->
+    <div class="counter-banner">
+      <span id="docCounterText">Documents disponibles</span>
+      <span class="counter-sub">Leçons, exercices et corrigés pour la 9ème et la NS4</span>
+    </div>
+
+    <!-- Derniers documents ajoutés -->
+    <div class="latest-docs">
+      <div class="section-label">Nouveautés</div>
+      <h2 style="margin-bottom: 1.5rem; font-family: 'Source Serif 4', serif; font-weight: 600; font-size: 1.7rem;">Derniers documents publiés</h2>
+      <div class="docs-grid" id="latestDocsGrid">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Chargement des derniers documents…</p>
+      </div>
+    </div>
+
+    <!-- Comment ça marche (accordéon style FAQ) -->
+    <div class="why-us">
+      <div class="section-label">Un accès simple et rapide</div>
+      <h2>Comment ça marche ?</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            1. Sélectionnez votre classe
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Depuis la page d'accueil, choisissez 9ème ou NS4 pour accéder aux matières correspondantes.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            2. Identifiez votre matière
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Sélectionnez la matière souhaitée parmi la liste proposée pour votre classe.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            3. Consultez ou téléchargez les documents
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Leçons, exercices et corrigés sont accessibles en un clic, en ligne ou en téléchargement.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appel à contribution (postuler) -->
+    <div class="cta-contribute">
+      <div class="section-label">Vous êtes enseignant ?</div>
+      <h2>Rejoignez notre équipe pédagogique</h2>
+      <p>Contribuez à la réussite de centaines d'élèves en partageant vos leçons et exercices sur notre plateforme. Déposez votre candidature dès aujourd'hui.</p>
+      <a href="candidature.html" class="btn-admin" style="display: inline-block; margin-top: 1rem;">Déposer ma candidature</a>
+    </div>
+
+    <!-- Pourquoi PartageDocs (FAQ) -->
+    <div class="why-us">
+      <div class="section-label">Pourquoi nous choisir</div>
+      <h2>Pourquoi utiliser PartageDocs ?</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            Comment accéder aux documents ?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Consultez les fichiers PDF, images et documents en un clic, depuis un téléphone ou un ordinateur, sans aucune installation requise.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            Comment le contenu est-il organisé ?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Chaque matière est structurée en leçons, exercices et corrigés, afin de garantir une progression pédagogique cohérente, classe par classe.</p>
+            </div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button" aria-expanded="false">
+            Le service est-il gratuit et fiable ?
+            <span class="faq-icon"></span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              <p>Oui. L'ensemble des ressources est élaboré par des enseignants, vérifié, et accessible sans inscription ni frais cachés.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pied de page -->
+  <footer>
+    <div>© 2026 PartageDocs – Tous droits réservés</div>
+    <div class="footer-links">
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html">Conditions d'utilisation</a>
+      <a href="admin.html">Administration</a>
+    </div>
+  </footer>
+
+  <script>
+    // Changez cette URL par celle de votre backend une fois déployé.
+    const API_BASE_URL = 'https://4000-i8ke6pu1oio2a6qlzhrfc-33575382.us2.manus.computer/api';
+    const TYPE_LABELS = { lecons: 'Leçon', exercices: 'Exercice à faire', corriges: 'Exercice corrigé' };
+    const CLASSE_LABELS = { '9eme': '9ème', 'ns4': 'NS4' };
+
+    function formatRelativeDate(iso) {
+      const date = new Date(iso.replace(' ', 'T') + 'Z');
+      const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+      if (days <= 0) return "Publié aujourd'hui";
+      if (days === 1) return 'Publié il y a 1 jour';
+      if (days < 7) return 'Publié il y a ' + days + ' jours';
+      const weeks = Math.floor(days / 7);
+      if (weeks === 1) return 'Publié il y a 1 semaine';
+      if (weeks < 5) return 'Publié il y a ' + weeks + ' semaines';
+      return 'Publié le ' + date.toLocaleDateString('fr-FR');
+    }
+
+    function loadLatestDocuments() {
+      const grid = document.getElementById('latestDocsGrid');
+
+      Promise.all([
+        fetch(API_BASE_URL + '/documents?classe=9eme').then(function(r) { return r.json(); }),
+        fetch(API_BASE_URL + '/documents?classe=ns4').then(function(r) { return r.json(); })
+      ]).then(function(results) {
+        const allDocs = (results[0].documents || []).concat(results[1].documents || []);
+        allDocs.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+
+        document.getElementById('docCounterText').textContent =
+          allDocs.length + ' document' + (allDocs.length !== 1 ? 's' : '') + ' disponible' + (allDocs.length !== 1 ? 's' : '');
+
+        const latest = allDocs.slice(0, 3);
+        grid.innerHTML = '';
+
+        if (latest.length === 0) {
+          grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Aucun document publié pour le moment.</p>';
+          return;
+        }
+
+        latest.forEach(function(doc) {
+          const pageFile = doc.classe_id === '9eme' ? '9eme-document.html' : 'ns4-document.html';
+          const a = document.createElement('a');
+          a.href = pageFile + '?id=' + doc.id;
+          a.className = 'doc-card';
+          a.innerHTML =
+            '<span class="doc-badge">' + (CLASSE_LABELS[doc.classe_id] || doc.classe_name) + '</span>' +
+            '<h4>' + doc.titre + '</h4>' +
+            '<p>' + (doc.description || TYPE_LABELS[doc.type] || '') + '</p>' +
+            '<span class="doc-meta">' + formatRelativeDate(doc.created_at) + '</span>';
+          grid.appendChild(a);
+        });
+      }).catch(function() {
+        document.getElementById('docCounterText').textContent = 'Documents disponibles';
+        grid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Impossible de contacter le serveur (' + API_BASE_URL + ').</p>';
+      });
+    }
+
+    loadLatestDocuments();
+
+    (function() {
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+
+      function getPreferredTheme() {
+        const saved = localStorage.getItem('partagedocs-theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        toggle.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode jour' : 'Activer le mode nuit');
+      }
+
+      applyTheme(getPreferredTheme());
+
+      toggle.addEventListener('click', function() {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('partagedocs-theme', next);
+      });
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (!localStorage.getItem('partagedocs-theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
+    // Menu discret (trois points)
+    (function() {
+      const wrapper = document.getElementById('navMenuWrapper');
+      const btn = document.getElementById('navMenuBtn');
+
+      function closeMenu() {
+        wrapper.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = wrapper.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) closeMenu();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+
+    // FAQ accordéon (fonctionne aussi pour "Comment ça marche")
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        item.classList.toggle('open', !isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    });
+  </script>
+</body>
+</html>
